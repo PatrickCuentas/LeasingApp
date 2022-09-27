@@ -12,6 +12,7 @@ import {
   BoxProps,
   FlexProps,
   Link,
+  Image,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -83,10 +84,20 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
-        </Text>
+      <Flex
+        h="20"
+        alignItems="center"
+        mx="8"
+        justifyContent="space-between"
+        my={8}
+      >
+        <Box>
+          <img
+            src="../../../public/logo-finanzas-removebg-preview.png"
+            alt=""
+            style={{ maxWidth: "100%" }}
+          />
+        </Box>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (

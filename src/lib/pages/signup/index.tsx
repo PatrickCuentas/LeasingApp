@@ -3,6 +3,7 @@ import {
   Box,
   FormControl,
   FormLabel,
+  Link,
   Input,
   InputGroup,
   HStack,
@@ -15,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Link } from "react-router-dom";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,16 +62,8 @@ export default function Signup() {
               <FormLabel>Correo</FormLabel>
               <Input type="email" />
             </FormControl>
-            <FormControl id="country" isRequired>
-              <FormLabel>Pais</FormLabel>
-              <Input type="text" />
-            </FormControl>{" "}
-            <FormControl id="username" isRequired>
-              <FormLabel>Nombre de usuario</FormLabel>
-              <Input type="text" />
-            </FormControl>
             <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Contraseña</FormLabel>
               <InputGroup>
                 <Input type={showPassword ? "text" : "password"} />
                 <InputRightElement h={"full"}>
@@ -85,6 +78,23 @@ export default function Signup() {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel>Repetir Contraseña</FormLabel>
+              <InputGroup>
+                <Input type={showPassword ? "text" : "password"} />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"
@@ -101,7 +111,7 @@ export default function Signup() {
             <Stack pt={6}>
               <Text align={"center"}>
                 Ya eres un usuario?{" "}
-                <Link color={"blue.400"} to="/login">
+                <Link color={"blue.400"} as={ReactRouterLink} to="/login">
                   Iniciar Sesión
                 </Link>
               </Text>

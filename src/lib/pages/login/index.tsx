@@ -11,9 +11,64 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  FormHelperText,
+  FormErrorMessage,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import { FirebaseService } from "../../../firebase/services/firebase.service";
+import { getAuthErrors } from "../../../utils/authUtils";
+import { Link as ReactRouterLink } from "react-router-dom";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+interface IAuthLoginErrors {
+  email: {
+    error: boolean;
+    message: string;
+  };
+  password: {
+    error: boolean;
+    message: string;
+  };
+}
 
 export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [inputValues, setInputValues] = useState({
+    email: "",
+    password: "",
+  });
+  const [errorValues, setErrorValues] = useState({
+    email: {
+      error: false,
+      message: "",
+    },
+    password: {
+      error: false,
+      message: "",
+    },
+  });
+
+  const { email: emailValue, password: passwordValue } = inputValues;
+  const { email: emailError, password: passwordError } = errorValues;
+
+  const handleInputChange = (e: any) => {
+    const { name, value } = e.target;
+    setInputValues({ ...inputValues, [name]: value });
+  };
+
+  const handleLogin = () => {
+    // Your login logic here
+    const loginErrors: IAuthLoginErrors = getAuthErrors(
+      emailValue,
+      passwordValue
+    );
+    setErrorValues(loginErrors);
+    if (!loginErrors?.email?.error && !loginErrors?.password?.error) {
+      FirebaseService.loginUserWithEmailAndPassword(emailValue, passwordValue);
+    }
+  };
+
   return (
     <Flex
       minH={"100vh"}
@@ -21,12 +76,12 @@ export default function Login() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={8} mx={"auto"} maxW={"xl"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Ingresa a tu cuenta</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            para disfrutar nuestras{" "}
-            <Link color={"blue.400"}>funcionalidades</Link> ✌️
+            y disfruta nuestras <Link color={"blue.400"}>funcionalidades</Link>{" "}
+            ✌️
           </Text>
         </Stack>
         <Box
@@ -36,31 +91,55 @@ export default function Login() {
           p={8}
         >
           <Stack spacing={4}>
-            <FormControl id="email">
+            <FormControl id="email" isInvalid={emailError.error}>
               <FormLabel>Correo</FormLabel>
-              <Input type="email" />
+              <Input type="email" name="email" onChange={handleInputChange} />
+              {emailError.error && (
+                <FormErrorMessage>{emailError.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl id="password">
+            <FormControl id="password" isInvalid={passwordError.error}>
               <FormLabel>Contraseña</FormLabel>
-              <Input type="password" />
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  onChange={handleInputChange}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {passwordError.error && (
+                <FormErrorMessage>{passwordError.message}</FormErrorMessage>
+              )}
             </FormControl>
+
             <Stack spacing={10}>
-              <Stack
-                direction={{ base: "column", sm: "row" }}
-                align={"start"}
-                justify={"space-between"}
+              <Link
+                color={"blue.400"}
+                as={ReactRouterLink}
+                to="/signup"
+                textAlign="end"
               >
-                <Checkbox>Recordarme</Checkbox>
-                <Link color={"blue.400"}>Olvidaste tu contraseña?</Link>
-              </Stack>
+                Registrate ahora!
+              </Link>
               <Button
                 bg={"blue.400"}
                 color={"white"}
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={handleLogin}
               >
-                Sign in
+                Iniciar Sesión
               </Button>
             </Stack>
           </Stack>
