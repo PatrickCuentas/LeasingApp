@@ -6,6 +6,16 @@ export const theme = extendTheme({
     body: "Plus Jakarta Sans, sans-serif",
   },
   components: {
+    Checkbox: {
+      variants: {
+        "custom-checkbox": {
+          control: {
+            border: "1.5px solid #1a202c",
+            boxShadow: "0 0 .5px .5px #ccc",
+          },
+        },
+      },
+    },
     // Button: {
     // }
   },
