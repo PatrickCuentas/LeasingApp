@@ -1,14 +1,14 @@
-import { Box, Checkbox, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useTheme } from "@emotion/react";
-
-const TablaBonos = () => {};
+import { auth } from "../../../firebase";
 
 const Home = () => {
   const theme = useTheme();
+  const user = auth?.currentUser?.displayName;
 
   return (
     <Box>
-      <Text>Contenido</Text>
+      <Text>Bienvenido de nuevo {user} 🌟🌟</Text>
     </Box>
   );
 };

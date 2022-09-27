@@ -4,33 +4,23 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
   Link,
   Button,
   Heading,
   Text,
   useColorModeValue,
-  FormHelperText,
   FormErrorMessage,
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FirebaseService } from "../../../firebase/services/firebase.service";
-import { getAuthErrors } from "../../../utils/authUtils";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { getAuthLoginErrors } from "../../../utils/authUtils";
+import { Link as ReactRouterLink, Navigate } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-interface IAuthLoginErrors {
-  email: {
-    error: boolean;
-    message: string;
-  };
-  password: {
-    error: boolean;
-    message: string;
-  };
-}
+import { IAuthLoginErrors } from "lib/interfaces/Auth";
+import { auth } from "../../../firebase";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +49,7 @@ export default function Login() {
 
   const handleLogin = () => {
     // Your login logic here
-    const loginErrors: IAuthLoginErrors = getAuthErrors(
+    const loginErrors: IAuthLoginErrors = getAuthLoginErrors(
       emailValue,
       passwordValue
     );
@@ -68,6 +58,10 @@ export default function Login() {
       FirebaseService.loginUserWithEmailAndPassword(emailValue, passwordValue);
     }
   };
+
+  if (auth.currentUser) {
+    return <Navigate replace to="/" />;
+  }
 
   return (
     <Flex

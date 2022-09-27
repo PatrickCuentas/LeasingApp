@@ -1,9 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Navigate, useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import GridLoader from "react-spinners/GridLoader";
-import { firebaseApp } from "../../../firebase";
+import { auth } from "../../../firebase";
 
 type PrivateRouteProps = {
   children: React.ReactNode;
@@ -15,9 +15,8 @@ const RequireAuth = ({
   redirectTo = "/login",
 }: PrivateRouteProps) => {
   // add your own authentication logic here
-  const auth = getAuth(firebaseApp.app);
   const user = auth.currentUser;
-  const [isAuthenticated, setIsAuthenticated] = useState(user ? true : false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

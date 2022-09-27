@@ -1,11 +1,9 @@
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
-const auth = getAuth();
-
-type UserCredentials = {
-  email: string;
-  password: string;
-};
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../../firebase";
 
 // login with firebase auth
 const loginUserWithEmailAndPassword = async (
@@ -21,5 +19,28 @@ const loginUserWithEmailAndPassword = async (
   }
 };
 
+// register with firebase auth
+const registerUserWithEmailAndPassword = async (
+  fullname: string,
+  email: string,
+  password: string
+) => {
+  // basic client side auth // firebase register functionality
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    if (auth.currentUser !== null) {
+      await updateProfile(auth.currentUser, { displayName: fullname }).catch(
+        (err) => console.log(err)
+      );
+    }
+    console.log(res); // add alert for success // add ui functionalities on successful register
+  } catch (error) {
+    console.log(error); // add alert for error
+  }
+};
+
 // exportar funciones
-export const FirebaseService = { loginUserWithEmailAndPassword };
+export const FirebaseService = {
+  loginUserWithEmailAndPassword,
+  registerUserWithEmailAndPassword,
+};
