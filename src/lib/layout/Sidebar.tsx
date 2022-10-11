@@ -14,13 +14,7 @@ import {
   Link,
   Image,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
+import { FiHome, FiTrendingUp, FiSettings, FiMenu } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ReactNode, ReactText } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
@@ -33,7 +27,6 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: "Inicio", path: "/", icon: FiHome },
   { name: "Mis bonos", path: "/bounds", icon: FiTrendingUp },
-  { name: "Favoritos", path: "/", icon: FiStar },
   { name: "Configuracion", path: "/configuration", icon: FiSettings },
 ];
 

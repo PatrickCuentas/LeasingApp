@@ -14,13 +14,12 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FirebaseService } from "../../../firebase/services/firebase.service";
 import { getAuthLoginErrors } from "../../../utils/authUtils";
-import { Link as ReactRouterLink, Navigate } from "react-router-dom";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { IAuthLoginErrors } from "lib/interfaces/Auth";
-import { auth } from "../../../firebase";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +37,7 @@ export default function Login() {
       message: "",
     },
   });
+  const navigate = useNavigate();
 
   const { email: emailValue, password: passwordValue } = inputValues;
   const { email: emailError, password: passwordError } = errorValues;
@@ -48,20 +48,20 @@ export default function Login() {
   };
 
   const handleLogin = () => {
-    // Your login logic here
     const loginErrors: IAuthLoginErrors = getAuthLoginErrors(
       emailValue,
       passwordValue
     );
     setErrorValues(loginErrors);
-    if (!loginErrors?.email?.error && !loginErrors?.password?.error) {
-      FirebaseService.loginUserWithEmailAndPassword(emailValue, passwordValue);
-    }
-  };
+    if (loginErrors.email.error || loginErrors.password.error) return;
 
-  if (auth.currentUser) {
-    return <Navigate replace to="/" />;
-  }
+    FirebaseService.loginUserWithEmailAndPassword(
+      emailValue,
+      passwordValue
+    ).then((isSuccess) => {
+      if (isSuccess) navigate("/");
+    });
+  };
 
   return (
     <Flex

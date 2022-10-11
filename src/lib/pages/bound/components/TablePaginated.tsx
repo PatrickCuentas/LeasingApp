@@ -16,12 +16,6 @@ import Swal from "sweetalert2";
 import { FiTrash2, FiFrown } from "react-icons/fi";
 import CustomCheckbox from "./CustomCheckbox";
 
-type Bono = {
-  id: number;
-  nombre: string;
-  valorNominal: number;
-};
-
 const TablePaginated = ({ data }: { data: any }) => {
   // Control current Page
   const [page, setPage] = React.useState(1);

@@ -20,10 +20,12 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.10",
     "@chakra-ui/react": "^2.2.9",
-    "@emotion/react": "^11.10.0",
-    "@emotion/styled": "^11.10.0",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
     "@fontsource/plus-jakarta-sans": "^4.5.9",
+    "@tanstack/react-table": "8.5.11",
     "firebase": "^9.10.0",
+    "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
     "react": "^18.2.0",
     "react-chakra-pagination": "^1.0.1",
@@ -31,9 +33,8 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
     "react-router-dom": "^6.3.0",
-    "react-table": "^7.8.0",
-    "sweetalert2": "^11.4.33",
-    "react-spinners": "^0.12.0"
+    "react-spinners": "^0.12.0",
+    "sweetalert2": "^11.4.33"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.1.0",
@@ -41,6 +42,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-helmet": "^6.1.5",
+    "@types/react-icons": "^3.0.0",
     "@types/react-table": "^7.7.12",
     "@vitejs/plugin-react": "^2.0.1",
     "commitlint": "^17.1.1",

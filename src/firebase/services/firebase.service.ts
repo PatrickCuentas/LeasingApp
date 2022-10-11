@@ -1,46 +1,57 @@
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	updateProfile,
 } from "firebase/auth";
 import { auth } from "../../firebase";
+import Swal from "sweetalert2";
 
-// login with firebase auth
 const loginUserWithEmailAndPassword = async (
-  email: string,
-  password: string
+	email: string,
+	password: string
 ) => {
-  // basic client side auth // firebase login functionality
-  try {
-    const res = await signInWithEmailAndPassword(auth, email, password);
-    console.log(res); // add alert for success // add ui functionalities on successful login
-  } catch (error) {
-    console.log(error); // add alert for error
-  }
+	try {
+		const res = await signInWithEmailAndPassword(auth, email, password);
+		console.log(res);
+		return true
+	} catch (error: any) {
+		const errorMessage = error.message;
+		Swal.fire({
+			icon: "error",
+			title: "Oops...",
+			text: errorMessage,
+		});
+		console.log(error);
+		return false
+	}
 };
 
-// register with firebase auth
 const registerUserWithEmailAndPassword = async (
-  fullname: string,
-  email: string,
-  password: string
+	fullname: string,
+	email: string,
+	password: string
 ) => {
-  // basic client side auth // firebase register functionality
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    if (auth.currentUser !== null) {
-      await updateProfile(auth.currentUser, { displayName: fullname }).catch(
-        (err) => console.log(err)
-      );
-    }
-    console.log(res); // add alert for success // add ui functionalities on successful register
-  } catch (error) {
-    console.log(error); // add alert for error
-  }
+	try {
+		const res = await createUserWithEmailAndPassword(auth, email, password);
+		if (auth.currentUser !== null) {
+			await updateProfile(auth.currentUser, { displayName: fullname })
+		}
+		console.log(res);
+		return true;
+	} catch (error: any) {
+		const errorMessage = error.message;
+		Swal.fire({
+			icon: "error",
+			title: "Oops...",
+			text: errorMessage,
+		});
+		console.log(error);
+		return false
+	}
 };
 
 // exportar funciones
 export const FirebaseService = {
-  loginUserWithEmailAndPassword,
-  registerUserWithEmailAndPassword,
+	loginUserWithEmailAndPassword,
+	registerUserWithEmailAndPassword,
 };
