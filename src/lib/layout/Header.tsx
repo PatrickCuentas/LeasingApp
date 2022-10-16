@@ -1,6 +1,6 @@
 import { Box, Flex, IconButton } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "../@auth/firebase/firebaseConfig";
 import ThemeToggle from "./ThemeToggle";
 import { FaSignOutAlt } from "react-icons/fa";
 

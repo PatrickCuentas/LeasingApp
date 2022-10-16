@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 const Meta = () => {
   return (
     <Helmet>
-      <title>Vite React Chakra Starter</title>
+      <title>Leasing APP</title>
     </Helmet>
   );
 };

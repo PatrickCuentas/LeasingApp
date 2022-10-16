@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Flex,
   Box,
@@ -14,12 +15,17 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { FirebaseService } from "../../../firebase/services/firebase.service";
-import { getAuthLoginErrors } from "../../../utils/authUtils";
-import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { IAuthLoginErrors } from "lib/interfaces/Auth";
+import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
+
+// services
+import { FirebaseService } from "../../@auth/firebase/firebase.service";
+
+// interfaces
+import { IAuthLoginErrors } from "lib/@auth/interfaces/Auth";
+
+// utils
+import { getAuthLoginErrors } from "lib/@auth/utils/authUtils";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,19 +91,25 @@ export default function Login() {
           p={8}
         >
           <Stack spacing={4}>
-            <FormControl id="email" isInvalid={emailError.error}>
-              <FormLabel>Correo</FormLabel>
-              <Input type="email" name="email" onChange={handleInputChange} />
+            <FormControl isInvalid={emailError.error} isRequired>
+              <FormLabel htmlFor="email">Correo</FormLabel>
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                onChange={handleInputChange}
+              />
               {emailError.error && (
                 <FormErrorMessage>{emailError.message}</FormErrorMessage>
               )}
             </FormControl>
-            <FormControl id="password" isInvalid={passwordError.error}>
-              <FormLabel>Contraseña</FormLabel>
+            <FormControl isInvalid={passwordError.error} isRequired>
+              <FormLabel htmlFor="passowrd">Contraseña</FormLabel>
               <InputGroup>
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  id="password"
                   onChange={handleInputChange}
                 />
                 <InputRightElement h={"full"}>
@@ -127,7 +139,7 @@ export default function Login() {
               </Link>
               <Button
                 bg={"blue.400"}
-                color={"white"}
+                style={{ color: "white" }}
                 _hover={{
                   bg: "blue.500",
                 }}

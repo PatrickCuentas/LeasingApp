@@ -3,7 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import GridLoader from "react-spinners/GridLoader";
-import { auth } from "../../../firebase";
+import { auth } from "../firebase/firebaseConfig";
 
 type PrivateRouteProps = {
   children: React.ReactNode;

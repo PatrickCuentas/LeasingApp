@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -8,379 +8,321 @@ import {
   Input,
   Button,
   SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
+  useColorModeValue,
 } from "@chakra-ui/react";
+
+// firebase
+import { auth } from "../../@auth/firebase/firebaseConfig";
+
+// react-icons
 import { ImArrowRight } from "react-icons/im";
-import { useTheme } from "@emotion/react";
-import { auth } from "../../../firebase";
+
+// formik
 import { useFormik } from "formik";
 
-import "./index.css";
-import TableResults from "./components/TableResults";
-import Bounds from "../bound/index";
+// components
+import LeasingTablePaginated from "../../@core/LeasingTablePaginated";
+import NumberInputForm from "./components/NumberInputForm";
+import Results from "../../@core/components/Results";
 
-type FormResults = {};
+// Framer motion
+import { motion, AnimatePresence } from "framer-motion";
+
+// core items
+import {
+  LeasingEntryProps,
+  LeasingInitialOutputProps,
+  LeasingFinalOutputProps,
+  LeasingTableProps,
+} from "../../@core/interfaces/leasing";
+import {
+  DEMO_ENTRY_DATA,
+  DEMO_FINAL_OUTPUT_DATA,
+  DEMO_INITIAL_OUTPUT_DATA,
+} from "../../@core/utils/initialStates";
+
+import "./index.css";
+import {
+  calculateInitialOutputResults,
+  calculateTableResults,
+} from "lib/@core/helpers/calculationHelpers";
 
 const Home = () => {
-  const theme = useTheme();
   const userName = auth?.currentUser?.displayName;
-  const [completed, setCompleted] = useState(false);
-  const [resultados, setResultados] = useState({
-    igv: null,
-    valorVentaActivo: null,
-    montoDelLeasing: null,
-    porcentajeTEP: null,
-    numeroCuotasPorAnio: null,
-    numeroTotalDeCuotas: null,
-    seguroRiesgo: null,
-    intereses: null,
-    amortizacionDelCapital: null,
-    seguroContraTodoRiesgo: null,
-    comisionesPeriodicas: null,
-    recompra: null,
-    desembolsoTotal: null,
-    tceaFlujoBruto: null,
-    tceaFlujoNeto: null,
-    vanFlujoBruto: null,
-    vanFlujoNeto: null,
+  const [hasResults, setHasResults] = useState(false);
+  const [initialOutputResultsState, setInitialOutputResults] =
+    useState<LeasingInitialOutputProps>(DEMO_INITIAL_OUTPUT_DATA);
+  const [finalOutputResultsState, setFinalOutputResultsState] =
+    useState<LeasingFinalOutputProps>(DEMO_FINAL_OUTPUT_DATA);
+  const [tableResults, setTableResults] = useState<LeasingTableProps[]>([]);
+
+  // LEASING_ENTRY_DATA;
+  const formik = useFormik({
+    initialValues: DEMO_ENTRY_DATA as LeasingEntryProps,
+    onSubmit: (values: LeasingEntryProps) => {
+      const initialOutputResults: LeasingInitialOutputProps =
+        calculateInitialOutputResults(values, handleEndInitialOuputCalculation);
+
+      const results = calculateTableResults(
+        values,
+        initialOutputResults,
+        handleEndTableCalculation
+      );
+
+      // calculateFinalOutputResults(values);
+    },
+    validate: (values: LeasingEntryProps) => {
+      const errors: any = {};
+
+      for (const [key, value] of Object.entries(values)) {
+        if (!value) {
+          errors[key] = "Requerido";
+        }
+      }
+
+      return errors;
+    },
   });
 
-  const formik = useFormik({
-    initialValues: {
-      previoVentaActivo: "",
-      nDeAnios: "",
-      frecuenciaDePago: "",
-      nDiasPorAnio: "",
-      porcentajeTEA: "",
-      porcentajeImpuestoALaRenta: "",
-      porcentajeRecompra: "",
-      costesNotariales: "",
-      costesRegistrales: "",
-      tasacion: "",
-      comisionDeEstudio: "",
-      comisionDeActivacion: "",
-      comisionPeriodica: "",
-      porcentajeDeSeguroRiesgo: "",
-      tasaDescuentoKs: "",
-      tasaDescuentoWACC: "",
+  const handleEndInitialOuputCalculation = (
+    initialOutputResults: LeasingInitialOutputProps
+  ) => {
+    setInitialOutputResults(initialOutputResults);
+  };
+
+  const handleEndTableCalculation = (results: LeasingTableProps[]) => {
+    setHasResults(true);
+    setTableResults(results);
+    formik.setSubmitting(false);
+  };
+
+  const handleChange = (e: any, id: string) => {
+    setHasResults(false);
+    setTableResults([]);
+    formik.setFieldValue(id, e);
+  };
+
+  const variants = {
+    withResults: {
+      initial: {
+        opacity: 0,
+      },
+      animate: {
+        opacity: 1,
+        y: [-100, 0],
+      },
     },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    withoutResults: {
+      initial: {
+        height: 0,
+        opacity: 0,
+      },
+      animate: {
+        height: "100%",
+        opacity: 1,
+        y: 0,
+      },
     },
-  });
+  };
 
   return (
-    <Box>
+    <Box bg={useColorModeValue("gray.30", "gray.900")}>
       <Text>Bienvenido de nuevo {userName} 🌟🌟</Text>
-      <Text as="h1" align="center" fontSize="3xl" fontWeight="bold">
+      <Text as="h1" align="center" fontSize="3xl" fontWeight="bold" mb={8}>
         Leasing Financiero
       </Text>
+      {/* {JSON.stringify(formik.values, null, 4)} */}
+      {/* {JSON.stringify(formik.isValid, null, 4)} */}
       <form onSubmit={formik.handleSubmit}>
-        <Flex p={8} gap="100" as="main">
-          <SimpleGrid columns={2} spacing={5}>
-            <FormControl>
-              <FormLabel htmlFor="precioVentaActivo">
-                Precio de Venta del Activo
-              </FormLabel>
-              <Input
-                id="precioVentaActivo"
-                name="previoVentaActivo"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.previoVentaActivo}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="nDeAnios">N° de Años</FormLabel>
-              <Input
-                id="nDeAnios"
-                name="nDeAnios"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.nDeAnios}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="frecuenciaDePago">
-                Frecuencia de Pago
-              </FormLabel>
-              <Input
-                id="frecuenciaDePago"
-                name="frecuenciaDePago"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.frecuenciaDePago}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="nDiasPorAnio">N° de días por año</FormLabel>
-              <Input
-                id="nDiasPorAnio"
-                name="nDiasPorAnio"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.nDiasPorAnio}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="porcentajeTEA">% de TEA</FormLabel>
-              <Input
-                id="porcentajeTEA"
-                name="porcentajeTEA"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.porcentajeTEA}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>% de IGV</FormLabel>
-              <Input isReadOnly isDisabled variant="filled" value="18.00%" />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="porcentajeImpuestoALaRenta">
-                % de Impuesto a la renta
-              </FormLabel>
-              <Input
-                id="porcentajeImpuestoALaRenta"
-                name="porcentajeImpuestoALaRenta"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.porcentajeImpuestoALaRenta}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="porcentajeImpuestoALaRenta">
-                % de Impuesto a la renta
-              </FormLabel>
-              <Input
-                id="porcentajeImpuestoALaRenta"
-                name="porcentajeImpuestoALaRenta"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.porcentajeImpuestoALaRenta}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="porcentajeRecompra">
-                % de de recompra
-              </FormLabel>
-              <Input
-                id="porcentajeRecompra"
-                name="porcentajeRecompra"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.porcentajeRecompra}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="costesNotariales">
-                Costes Notariales
-              </FormLabel>
-              <Input
-                id="costesNotariales"
-                name="costesNotariales"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.costesNotariales}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="costesRegistrales">
-                Costes Registrales
-              </FormLabel>
-              <Input
-                id="costesRegistrales"
-                name="costesRegistrales"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.costesRegistrales}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasacion">Tasación</FormLabel>
-              <Input
-                id="tasacion"
-                name="tasacion"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.tasacion}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasacion">Comisión de estudio</FormLabel>
-              <Input
-                id="comisionDeEstudio"
-                name="comisionDeEstudio"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.comisionDeEstudio}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasacion">Comisión de activación</FormLabel>
-              <Input
-                id="comisionDeActivacion"
-                name="comisionDeActivacion"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.comisionDeActivacion}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasacion">Comisión de periodica</FormLabel>
-              <Input
-                id="comisionPeriodica"
-                name="comisionPeriodica"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.comisionPeriodica}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="porcentajeDeSeguroRiesgo">
-                % de Seguro Riesgo
-              </FormLabel>
-              <Input
-                id="porcentajeDeSeguroRiesgo"
-                name="porcentajeDeSeguroRiesgo"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.porcentajeDeSeguroRiesgo}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasaDescuentoKs">
-                Tasa de descuento Ks
-              </FormLabel>
-              <Input
-                id="tasaDescuentoKs"
-                name="tasaDescuentoKs"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.tasaDescuentoKs}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="tasaDescuentoKs">
-                Tasa de descuento WACC
-              </FormLabel>
-              <Input
-                id="tasaDescuentoKs"
-                name="tasaDescuentoKs"
-                type="text"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.tasaDescuentoKs}
-              />
-            </FormControl>
-          </SimpleGrid>
-          <Flex justifyContent="center" alignItems="center">
-            <ImArrowRight />
-          </Flex>
-          {!completed && (
+        <Flex
+          p={8}
+          gap="100"
+          as="main"
+          bg={useColorModeValue("white", "gray.900")}
+        >
+          <SimpleGrid
+            columns={hasResults ? [1, null, 3] : 1}
+            width={hasResults ? "auto" : "100%"}
+            spacing={5}
+          >
             <SimpleGrid
               columns={2}
-              rowGap={4}
-              columnGap={8}
-              id="resultados"
-              className=""
+              spacing={10}
+              as={motion.div}
+              initial={
+                hasResults
+                  ? variants.withResults.initial
+                  : variants.withoutResults.initial
+              }
+              animate={
+                hasResults
+                  ? variants.withResults.animate
+                  : variants.withoutResults.animate
+              }
+              placeItems="flex-end"
             >
-              {/* para los resultados */}
-              <Stat>
-                <StatLabel>I.G.V.</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Valor Venta del Activo</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Monto del Leasing</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>% de TEP</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>N° Cuotas por Año</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>N° Total de Cuotas</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Seguro Riesgo</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Intereses</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Amortizacion del capital</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Seguro contra todo riesgo</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Comisiones periodicas</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Recompra</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>Desembolso total</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>TCEA Flujo Bruto</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
-              <Stat>
-                <StatLabel>TCEA Flujo Neto</StatLabel>
-                <StatNumber>£0.00</StatNumber>
-              </Stat>
+              <NumberInputForm
+                id="precioVentaActivo"
+                title="Precio de Venta del Activo"
+                handleChange={handleChange}
+                value={formik.values.precioVentaActivo}
+                errorMessage={formik.errors.precioVentaActivo}
+              />
+              <NumberInputForm
+                id="nDeAnios"
+                title="Número de Años"
+                handleChange={handleChange}
+                value={formik.values.nDeAnios}
+                precision={0}
+                errorMessage={formik.errors.nDeAnios}
+              />
+              <NumberInputForm
+                id="frecuenciaDePago"
+                title="Frecuencia de Pago"
+                handleChange={handleChange}
+                value={formik.values.frecuenciaDePago}
+                precision={0}
+                errorMessage={formik.errors.frecuenciaDePago}
+              />
+              <NumberInputForm
+                id="nDiasPorAnio"
+                title="Número de Días por Año"
+                handleChange={handleChange}
+                value={formik.values.nDiasPorAnio}
+                precision={0}
+                errorMessage={formik.errors.nDiasPorAnio}
+              />
+              <NumberInputForm
+                id="porcentajeTEA"
+                title="Porcentaje TEA"
+                handleChange={handleChange}
+                value={formik.values.porcentajeTEA}
+                errorMessage={formik.errors.porcentajeTEA}
+              />
+              <FormControl>
+                <FormLabel>% de IGV</FormLabel>
+                <Input isReadOnly isDisabled variant="filled" value="18.00%" />
+              </FormControl>
+              <NumberInputForm
+                id="porcentajeImpuestoALaRenta"
+                title="Porcentaje Impuesto a la Renta"
+                handleChange={handleChange}
+                value={formik.values.porcentajeImpuestoALaRenta}
+                errorMessage={formik.errors.porcentajeImpuestoALaRenta}
+              />
+              <NumberInputForm
+                id="porcentajeRecompra"
+                title="Porcentaje Recompra"
+                handleChange={handleChange}
+                value={formik.values.porcentajeRecompra}
+                errorMessage={formik.errors.porcentajeRecompra}
+              />
+              <NumberInputForm
+                id="costesNotariales"
+                title="Costes Notariales"
+                handleChange={handleChange}
+                value={formik.values.costesNotariales}
+                errorMessage={formik.errors.costesNotariales}
+              />
+              <NumberInputForm
+                id="costesRegistrales"
+                title="Costes Registrales"
+                handleChange={handleChange}
+                value={formik.values.costesRegistrales}
+                errorMessage={formik.errors.costesRegistrales}
+              />
+              <NumberInputForm
+                id="tasacion"
+                title="Tasación"
+                handleChange={handleChange}
+                value={formik.values.tasacion}
+                errorMessage={formik.errors.tasacion}
+              />
+              <NumberInputForm
+                id="comisionDeEstudio"
+                title="Comisión de Estudio"
+                handleChange={handleChange}
+                value={formik.values.comisionDeEstudio}
+                errorMessage={formik.errors.comisionDeEstudio}
+              />
+              <NumberInputForm
+                id="comisionDeActivacion"
+                title="Comisión de Activación"
+                handleChange={handleChange}
+                value={formik.values.comisionDeActivacion}
+                errorMessage={formik.errors.comisionDeActivacion}
+              />
+              <NumberInputForm
+                id="comisionPeriodica"
+                title="Comisión Periódica"
+                handleChange={handleChange}
+                value={formik.values.comisionPeriodica}
+                errorMessage={formik.errors.comisionPeriodica}
+              />
+              <NumberInputForm
+                id="porcentajeDeSeguroRiesgo"
+                title="Porcentaje de Seguro de Riesgo"
+                handleChange={handleChange}
+                value={formik.values.porcentajeDeSeguroRiesgo}
+                errorMessage={formik.errors.porcentajeDeSeguroRiesgo}
+              />
+              <NumberInputForm
+                id="tasaDescuentoKS"
+                title="Tasa de Descuento KS"
+                handleChange={handleChange}
+                value={formik.values.tasaDescuentoKS}
+                errorMessage={formik.errors.tasaDescuentoKS}
+              />
+              <NumberInputForm
+                id="tasaDescuentoWACC"
+                title="Tasa de Descuento WACC"
+                handleChange={handleChange}
+                value={formik.values.tasaDescuentoWACC}
+                errorMessage={formik.errors.tasaDescuentoWACC}
+              />
+              <Button
+                mt={8}
+                w="100%"
+                gridColumnStart={1}
+                gridColumnEnd={3}
+                size="lg"
+                isDisabled={hasResults || !formik.isValid}
+                isLoading={formik.isSubmitting}
+                bg={"blue.400"}
+                color={"white"}
+                _hover={{
+                  bg: "blue.500",
+                }}
+                type="submit"
+              >
+                Calcular
+              </Button>
             </SimpleGrid>
-          )}
+            <AnimatePresence>
+              {hasResults && (
+                <>
+                  <Flex justifyContent="center" alignItems="center">
+                    <ImArrowRight />
+                  </Flex>
+                  <Results
+                    results={{
+                      ...initialOutputResultsState,
+                      ...finalOutputResultsState,
+                    }}
+                  />
+                </>
+              )}
+            </AnimatePresence>
+          </SimpleGrid>
         </Flex>
-        {/* <Button
-											bg={"blue.400"}
-											color={"white"}
-											_hover={{
-												bg: "blue.500",
-											}}
-											onClick={handleLogin}
-										>
-											Iniciar Sesión
-										</Button> */}
       </form>
-      {/* <TableResults /> */}
-      <Bounds />
-      {/* {JSON.stringify(formik.values, null, 2)} */}
+      <LeasingTablePaginated
+        data={tableResults}
+        setTableResults={setTableResults}
+        values={formik.values}
+        initialOutputResultsState={initialOutputResultsState}
+      />
+      {/* {JSON.stringify(results, null, 2)} */}
     </Box>
   );
 };

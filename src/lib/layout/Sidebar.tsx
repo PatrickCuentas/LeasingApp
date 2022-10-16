@@ -26,8 +26,8 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: "Inicio", path: "/", icon: FiHome },
-  { name: "Mis bonos", path: "/bounds", icon: FiTrendingUp },
-  { name: "Configuracion", path: "/configuration", icon: FiSettings },
+  { name: "Mis Prestamos", path: "/list", icon: FiTrendingUp },
+  { name: "Editar Perfil", path: "/edit", icon: FiSettings },
 ];
 
 const Sidebar = ({ children }: { children: ReactNode }) => {

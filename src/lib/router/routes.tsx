@@ -3,7 +3,7 @@ import type { PathRouteProps } from "react-router-dom";
 import Home from "lib/pages/home";
 import Login from "lib/pages/login";
 import Signup from "lib/pages/signup";
-import Bounds from "lib/pages/bound";
+import UserProfileEdit from "lib/pages/profile";
 
 export const routes: Array<PathRouteProps> = [
   {
@@ -22,7 +22,11 @@ export const privateRoutes: Array<PathRouteProps> = [
     element: <Home />,
   },
   {
-    path: "/bounds",
-    element: <Bounds />,
+    path: "/list",
+    element: <Home />,
+  },
+  {
+    path: "/edit",
+    element: <UserProfileEdit />,
   },
 ];

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Flex,
   Box,
@@ -15,22 +16,26 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
-import { FirebaseService } from "../../../firebase/services/firebase.service";
-import { IAuthRegisterErrors } from "lib/interfaces/Auth";
-import { getAuthRegisterErrors } from "../../../utils/authUtils";
-import { useForm } from "react-hook-form";
+
+// services
+import { FirebaseService } from "../../@auth/firebase/firebase.service";
+
+// interfaces
+import { IAuthRegisterErrors } from "lib/@auth/interfaces/Auth";
+
+//
+import { getAuthRegisterErrors } from "lib/@auth/utils/authUtils";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [inputValues, setInputValues] = useState({
-    firstName: "Patrick",
-    lastName: "Cuentas",
-    email: "patrick_cuentas3@hotmail.com",
-    password: "patrick06cuentas",
-    confirmPassword: "patrick06cuentas",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [errorValues, setErrorValues] = useState({
     email: {
@@ -94,143 +99,144 @@ export default function Signup() {
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
     >
-      <form onSubmit={handleRegister}>
-        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-          <Stack align={"center"}>
-            <Heading fontSize={"4xl"} textAlign={"center"}>
-              Registrate
-            </Heading>
-            <Text fontSize={"lg"} color={"gray.600"}>
-              para conocer nuestras funcionalidades ✌️
-            </Text>
-          </Stack>
-          <Box
-            rounded={"lg"}
-            bg={useColorModeValue("white", "gray.700")}
-            boxShadow={"lg"}
-            p={8}
-          >
-            <Stack spacing={4}>
-              <HStack>
-                <Box>
-                  <FormControl id="firstName" isRequired>
-                    <FormLabel>Nombres</FormLabel>
-                    <Input
-                      type="text"
-                      name="firstName"
-                      value={firstNameValue}
-                      onChange={handleInputChange}
-                    />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl id="lastName">
-                    <FormLabel>Apellidos</FormLabel>
-                    <Input
-                      type="text"
-                      name="lastName"
-                      value={lastNameValue}
-                      onChange={handleInputChange}
-                    />
-                  </FormControl>
-                </Box>
-              </HStack>
-              <FormControl id="email" isRequired isInvalid={emailError.error}>
-                <FormLabel>Correo</FormLabel>
+      {/* <form onSubmit={handleRegister}> */}
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+        <Stack align={"center"}>
+          <Heading fontSize={"4xl"} textAlign={"center"}>
+            Registrate
+          </Heading>
+          <Text fontSize={"lg"} color={"gray.600"}>
+            para conocer nuestras funcionalidades ✌️
+          </Text>
+        </Stack>
+        <Box
+          rounded={"lg"}
+          bg={useColorModeValue("white", "gray.700")}
+          boxShadow={"lg"}
+          p={8}
+        >
+          <Stack spacing={4}>
+            <HStack>
+              <Box>
+                <FormControl isRequired>
+                  <FormLabel htmlFor="firstName">Nombres</FormLabel>
+                  <Input
+                    type="text"
+                    name="firstName"
+                    id="firstName"
+                    value={firstNameValue}
+                    onChange={handleInputChange}
+                  />
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl>
+                  <FormLabel htmlFor="lastName">Apellidos</FormLabel>
+                  <Input
+                    type="text"
+                    name="lastName"
+                    id="lastName"
+                    value={lastNameValue}
+                    onChange={handleInputChange}
+                  />
+                </FormControl>
+              </Box>
+            </HStack>
+            <FormControl isInvalid={emailError.error} isRequired>
+              <FormLabel htmlFor="email">Correo</FormLabel>
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                value={emailValue}
+                onChange={handleInputChange}
+              />
+              {emailError.error && (
+                <FormErrorMessage>{emailError.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl isInvalid={passwordError.error} isRequired>
+              <FormLabel htmlFor="passowrd">Contraseña</FormLabel>
+              <InputGroup>
                 <Input
-                  type="email"
-                  name="email"
-                  value={emailValue}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  value={passwordValue}
                   onChange={handleInputChange}
                 />
-                {emailError.error && (
-                  <FormErrorMessage>{emailError.message}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                id="password"
-                isRequired
-                isInvalid={passwordError.error}
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {passwordError.error && (
+                <FormErrorMessage>{passwordError.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl
+              id="confirmPassword"
+              isRequired
+              isInvalid={confirmPasswordError.error}
+            >
+              <FormLabel>Repetir Contraseña</FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={confirmPasswordValue}
+                  onChange={handleInputChange}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {confirmPasswordError.error && (
+                <FormErrorMessage>
+                  {confirmPasswordError.message}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <Stack spacing={10} pt={2}>
+              <Button
+                type="submit"
+                loadingText="Submitting"
+                size="lg"
+                bg={"blue.400"}
+                style={{ color: "white" }}
+                _hover={{
+                  bg: "blue.500",
+                }}
+                onClick={handleRegister}
               >
-                <FormLabel>Contraseña</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={passwordValue}
-                    onChange={handleInputChange}
-                  />
-                  <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
-                      onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
-                      }
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {passwordError.error && (
-                  <FormErrorMessage>{passwordError.message}</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                id="confirmPassword"
-                isRequired
-                isInvalid={confirmPasswordError.error}
-              >
-                <FormLabel>Repetir Contraseña</FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={confirmPasswordValue}
-                    onChange={handleInputChange}
-                  />
-                  <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
-                      onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
-                      }
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {confirmPasswordError.error && (
-                  <FormErrorMessage>
-                    {confirmPasswordError.message}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <Stack spacing={10} pt={2}>
-                <Button
-                  type="submit"
-                  loadingText="Submitting"
-                  size="lg"
-                  bg={"blue.400"}
-                  style={{ color: "white" }}
-                  _hover={{
-                    bg: "blue.500",
-                  }}
-                >
-                  Unirse
-                </Button>
-              </Stack>
-              <Stack pt={6}>
-                <Text align={"center"}>
-                  Ya eres un usuario?{" "}
-                  <Link color={"blue.400"} as={ReactRouterLink} to="/login">
-                    Iniciar Sesión
-                  </Link>
-                </Text>
-              </Stack>
+                Unirse
+              </Button>
             </Stack>
-          </Box>
-        </Stack>
-      </form>
+            <Stack pt={6}>
+              <Text align={"center"}>
+                Ya eres un usuario?{" "}
+                <Link color={"blue.400"} as={ReactRouterLink} to="/login">
+                  Iniciar Sesión
+                </Link>
+              </Text>
+            </Stack>
+          </Stack>
+        </Box>
+      </Stack>
+      {/* </form> */}
     </Flex>
   );
 }
