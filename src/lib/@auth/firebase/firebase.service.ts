@@ -7,21 +7,9 @@ import {
 	updatePassword,
 	updateProfile,
 } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+import { auth, database } from "./firebaseConfig";
 import Swal from "sweetalert2";
-
-// if (user !== null) {
-// The user object has basic properties such as display name, email, etc.
-// 	const displayName = user.displayName;
-// 	const email = user.email;
-// 	const photoURL = user.photoURL;
-// 	const emailVerified = user.emailVerified;
-
-// The user's ID, unique to the Firebase project. Do NOT use
-// this value to authenticate with your backend server, if
-// you have one. Use User.getToken() instead.
-// 	const uid = user.uid;
-// }
+import { doc, setDoc } from "firebase/firestore";
 
 const updateUserProfile = async (displayName: string, email: string, password: string) => {
 
@@ -41,7 +29,6 @@ const updateUserProfile = async (displayName: string, email: string, password: s
 		return true
 	} catch (error: any) {
 		const errorMessage = error.message;
-		console.log(errorMessage)
 
 		if (errorMessage === 'Firebase: Error (auth/requires-recent-login).' && user !== null) {
 			Swal.fire({
@@ -83,7 +70,6 @@ const updateUserProfile = async (displayName: string, email: string, password: s
 				title: "Oops...",
 				text: errorMessage,
 			});
-			console.log(error);
 		}
 	}
 };
@@ -93,8 +79,7 @@ const loginUserWithEmailAndPassword = async (
 	password: string
 ) => {
 	try {
-		const res = await signInWithEmailAndPassword(auth, email, password);
-		console.log(res);
+		await signInWithEmailAndPassword(auth, email, password);
 		return true
 	} catch (error: any) {
 		const errorMessage = error.message;
@@ -103,7 +88,6 @@ const loginUserWithEmailAndPassword = async (
 			title: "Iniciar sesión",
 			text: errorMessage,
 		});
-		console.log(error);
 		return false
 	}
 };
@@ -114,11 +98,19 @@ const registerUserWithEmailAndPassword = async (
 	password: string
 ) => {
 	try {
-		const res = await createUserWithEmailAndPassword(auth, email, password);
+		const credential = await createUserWithEmailAndPassword(auth, email, password)
+
+		if (credential && credential.user) {
+			await setDoc(doc(database, "users", credential.user.uid), {
+				fullname: fullname,
+				email: email,
+				uid: credential.user.uid,
+			});
+		}
+
 		if (auth.currentUser !== null) {
 			await updateProfile(auth.currentUser, { displayName: fullname })
 		}
-		console.log(res);
 		return true;
 	} catch (error: any) {
 		const errorMessage = error.message;
@@ -127,7 +119,6 @@ const registerUserWithEmailAndPassword = async (
 			title: "Oops...",
 			text: errorMessage,
 		});
-		console.log(error);
 		return false
 	}
 };

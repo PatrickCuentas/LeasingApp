@@ -15,7 +15,8 @@
     "up-latest": "yarn up --latest",
     "release": "standard-version",
     "push-release": "git push --follow-tags origin main",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build:deploy": "env-cmd -f .env.production.local npm run build && firebase deploy -P finanzas-app-c618a"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.10",
@@ -23,6 +24,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@fontsource/plus-jakarta-sans": "^4.5.9",
+    "countup.js": "^2.3.2",
     "firebase": "^9.10.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
@@ -35,8 +37,7 @@
     "react-spinners": "^0.12.0",
     "react-table": "^7.8.0",
     "sweetalert2": "^11.4.33",
-    "yup": "0.32.8",
-    "countup.js": "^2.3.2"
+    "yup": "0.32.8"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.1.0",
@@ -48,6 +49,7 @@
     "@types/react-table": "^7.7.12",
     "@vitejs/plugin-react": "^2.0.1",
     "commitlint": "^17.1.1",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.23.0",
     "eslint-config-sznm": "^1.0.0",
     "husky": "^8.0.1",
