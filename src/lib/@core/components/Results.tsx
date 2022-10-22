@@ -28,7 +28,7 @@ const Results = ({ results }: any) => {
         console.error(countUp.error);
       }
     });
-  }, []);
+  }, [results]);
 
   return (
     <SimpleGrid

@@ -1,8 +1,8 @@
 {
-  "name": "vite-react-chakra-starter",
-  "version": "0.1.0",
+  "name": "leasing-app",
+  "version": "1.1.2",
   "private": true,
-  "author": "sozonome",
+  "author": "Patrick Cuentas",
   "scripts": {
     "dev": "vite --open",
     "build": "vite build",

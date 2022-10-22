@@ -8,9 +8,20 @@ const Result = ({ item, id }: { item: ResultItem; id: string }) => {
     else if (item.type === "P") return item.value.toFixed(2);
   };
 
+  const faltan = [
+    "TCEA (Flujo bruto)",
+    "TCEA (Flujo neto)",
+    "VAN (Flujo bruto)",
+    "VAN (Flujo neto)",
+  ];
+
+  const style = {
+    color: faltan.includes(item.title) ? "red" : "white",
+  };
+
   return (
     <Stat>
-      <StatLabel>{item.title}</StatLabel>
+      <StatLabel style={style}>{item.title}</StatLabel>
       <StatNumber id={id}>{assignFixed(item)}</StatNumber>
     </Stat>
   );

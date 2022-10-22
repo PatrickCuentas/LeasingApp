@@ -6,7 +6,7 @@ import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
 import { Table } from "react-chakra-pagination";
 
 // Components
-import Example from "./components/Example";
+import RadioInputForm from "./components/RadioInputForm";
 
 // Icons
 import { FiFrown } from "react-icons/fi";
@@ -14,13 +14,11 @@ import { FiFrown } from "react-icons/fi";
 // Interfaces
 import { LeasingTableProps } from "./interfaces/leasing";
 
-// Helpers
-import { recalculateTableResults } from "./helpers/calculationHelpers";
-
+// Styles
 import "./style.css";
 
 const LeasingTablePaginated = (props: any) => {
-  const { data, setTableResults, values, initialOutputResultsState } = props;
+  const { data, handler } = props;
 
   // Control current Page
   const [page, setPage] = useState(1);
@@ -32,7 +30,7 @@ const LeasingTablePaginated = (props: any) => {
       accessor: "id" as const,
     },
     {
-      Header: "P.G.",
+      Header: "Periodo de Gracia",
       accessor: "periodoGracia" as const,
     },
     {
@@ -101,14 +99,12 @@ const LeasingTablePaginated = (props: any) => {
   const tableData = useMemo(() => {
     if (data.length === 0) return [];
 
-    return recalculateTableResults(data, values, initialOutputResultsState).map(
-      (item: LeasingTableProps, i: number) => ({
-        ...item,
-        periodoGracia: i > 0 && (
-          <Example setTableResults={setTableResults} index={i} />
-        ),
-      })
-    );
+    return data.map((item: LeasingTableProps, i: number) => ({
+      ...item,
+      periodoGracia: i > 0 && (
+        <RadioInputForm handler={handler} index={i} />
+      ),
+    }));
   }, [data]);
 
   return (
@@ -140,7 +136,7 @@ const LeasingTablePaginated = (props: any) => {
 // set types to props
 LeasingTablePaginated.propTypes = {
   data: PropTypes.array.isRequired,
-  setTableResults: PropTypes.func.isRequired,
+  handler: PropTypes.func.isRequired,
   values: PropTypes.object.isRequired,
   initialOutputResultsState: PropTypes.object.isRequired,
 };

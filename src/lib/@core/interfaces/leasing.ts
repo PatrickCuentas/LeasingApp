@@ -42,10 +42,10 @@ export interface LeasingFinalOutputProps {
 	comisionesPeriodicas: ResultItem;
 	recompra: ResultItem;
 	desembolsoTotal: ResultItem;
-	tceaFlujoBruto: ResultItem;
-	tceaFlujoNeto: ResultItem;
-	vanFlujoBruto: ResultItem;
-	vanFlujoNeto: ResultItem;
+	tceaFlujoBruto?: ResultItem;
+	tceaFlujoNeto?: ResultItem;
+	vanFlujoBruto?: ResultItem;
+	vanFlujoNeto?: ResultItem;
 }
 
 export interface LeasingEntryProps {
