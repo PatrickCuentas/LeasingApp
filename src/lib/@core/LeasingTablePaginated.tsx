@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 
 // Chakra UI
-import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
+import { Box, Heading, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import { Table } from "react-chakra-pagination";
 
 // Components
@@ -14,11 +14,43 @@ import { FiFrown } from "react-icons/fi";
 // Interfaces
 import { LeasingTableProps } from "./interfaces/leasing";
 
+// Others
+import uuid4 from "uuid4";
+import { GridLoader } from "react-spinners";
+
 // Styles
 import "./style.css";
 
+const LastRadioInputForm = () => {
+  return (
+    <Box as="label" display="flex" justifyContent="center">
+      <Box
+        cursor="pointer"
+        borderWidth="1px"
+        borderRadius="md"
+        boxShadow="md"
+        background="teal.600"
+        _focus={{
+          boxShadow: "outline",
+        }}
+        px={5}
+        py={3}
+      >
+        <Tooltip
+          label={"Sin periodo de Gracia"}
+          placement="top"
+          as="label"
+          aria-label="A tooltip"
+        >
+          S
+        </Tooltip>
+      </Box>
+    </Box>
+  );
+};
+
 const LeasingTablePaginated = (props: any) => {
-  const { data, handler } = props;
+  const { data, handler, isLoading } = props;
 
   // Control current Page
   const [page, setPage] = useState(1);
@@ -99,12 +131,23 @@ const LeasingTablePaginated = (props: any) => {
   const tableData = useMemo(() => {
     if (data.length === 0) return [];
 
-    return data.map((item: LeasingTableProps, i: number) => ({
-      ...item,
-      periodoGracia: i > 0 && (
-        <RadioInputForm handler={handler} index={i} />
-      ),
-    }));
+    return data.map((item: LeasingTableProps, i: number) => {
+      const id = uuid4();
+      return {
+        ...item,
+        key: id,
+        periodoGracia:
+          i === data.length - 1 ? (
+            <LastRadioInputForm />
+          ) : i > 0 ? (
+            <RadioInputForm
+              periodoGracia={item.periodoGracia}
+              handler={handler}
+              index={i}
+            />
+          ) : null,
+      };
+    });
   }, [data]);
 
   return (
@@ -114,20 +157,32 @@ const LeasingTablePaginated = (props: any) => {
       </Heading>
 
       <Box mt="6" bg={useColorModeValue("white", "gray.900")} overflow="auto">
-        <Table
-          colorScheme="twitter"
-          // Fallback component when list is empty
-          emptyData={{
-            icon: FiFrown,
-            text: "No hay nada por aquí.",
-          }}
-          totalRegisters={data.length}
-          page={page}
-          // Listen change page event and control the current page using state
-          onPageChange={(page) => setPage(page)}
-          columns={tableColumns}
-          data={tableData as any}
-        />
+        {isLoading ? (
+          <Box
+            minH="950px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <GridLoader color="tomato" loading={isLoading} size={50} />
+          </Box>
+        ) : (
+          <Table
+            colorScheme="twitter"
+            key={uuid4()}
+            // Fallback component when list is empty
+            emptyData={{
+              icon: FiFrown,
+              text: "No hay nada por aquí.",
+            }}
+            totalRegisters={data.length}
+            page={page}
+            // Listen change page event and control the current page using state
+            onPageChange={(page) => setPage(page)}
+            columns={tableColumns}
+            data={tableData as any}
+          />
+        )}
       </Box>
     </Box>
   );
@@ -135,10 +190,9 @@ const LeasingTablePaginated = (props: any) => {
 
 // set types to props
 LeasingTablePaginated.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
   data: PropTypes.array.isRequired,
   handler: PropTypes.func.isRequired,
-  values: PropTypes.object.isRequired,
-  initialOutputResultsState: PropTypes.object.isRequired,
 };
 
 export default LeasingTablePaginated;

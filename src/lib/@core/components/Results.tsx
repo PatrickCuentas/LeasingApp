@@ -10,15 +10,17 @@ import { ResultItem } from "lib/@core/interfaces/leasing";
 import { CountUp } from "countup.js";
 import { motion } from "framer-motion";
 
-const Results = ({ results }: any) => {
+const Results = ({ results, isLoading }: any) => {
   const entries = Object.keys(results);
 
   useEffect(() => {
+    if (isLoading) return;
+
     entries.forEach((key) => {
       const value = results[key].value;
       const type = results[key].type;
       const countUp = new CountUp(key, value, {
-        decimalPlaces: type === "E" ? 0 : type === "N" ? 2 : 2,
+        decimalPlaces: type === "E" ? 0 : type === "N" ? 2 : 4,
         prefix: type === "E" ? "" : type === "N" ? "S/." : "",
         suffix: type === "E" ? "" : type === "P" ? "%" : "",
       });
@@ -33,7 +35,8 @@ const Results = ({ results }: any) => {
   return (
     <SimpleGrid
       columns={2}
-      rowGap={2}
+      pt={[8, 8, 8, 8, 0]}
+      rowGap={[8, 8, 8, 8, 2]}
       columnGap={8}
       id="resultados"
       as={motion.div}
@@ -43,13 +46,9 @@ const Results = ({ results }: any) => {
         y: 0,
       }}
       animate={{
+        height: "100%",
         opacity: 1,
         y: [-100, 0],
-      }}
-      exit={{
-        height: 0,
-        opacity: 0,
-        y: 0,
       }}
     >
       {entries.map((key: string) => {

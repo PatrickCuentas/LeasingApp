@@ -46,7 +46,12 @@ function RadioCard(props: any) {
         px={5}
         py={3}
       >
-        <Tooltip label={getLabel(props.value)} placement="top" as="label">
+        <Tooltip
+          label={getLabel(props.value)}
+          placement="top"
+          as="label"
+          aria-label="A tooltip"
+        >
           {props.children}
         </Tooltip>
       </Box>
@@ -55,11 +60,20 @@ function RadioCard(props: any) {
 }
 
 // Step 2: Use the `useRadioGroup` hook to control a group of custom radios.
-function RadioInputForm({ handler, index }: any) {
+function RadioInputForm({
+  periodoGracia,
+  handler,
+  index,
+}: {
+  periodoGracia: string;
+  handler: any;
+  index: number;
+}) {
   const options = ["T", "S", "P"];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "periodoGracia",
+    value: periodoGracia,
     defaultValue: "S",
     onChange: (e) => handler(e)(index),
   });

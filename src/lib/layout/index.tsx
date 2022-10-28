@@ -1,5 +1,5 @@
-import { Box, Flex } from "@chakra-ui/react";
 import type { ReactNode } from "react";
+import { Box, Flex } from "@chakra-ui/react";
 
 import Header from "./Header";
 import Meta from "./Meta";
@@ -11,8 +11,6 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
-  // <Box margin="0 auto" maxWidth={1200} transition="0.5s ease-out">
-
   return (
     <Box transition="0.5s ease-out">
       <Flex wrap="wrap">

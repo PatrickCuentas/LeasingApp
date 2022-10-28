@@ -39,7 +39,7 @@ function obtenerCuota(numeroCuotaActual: number, numeroTotalCuotas: number, peri
 		cuota = 0
 	}
 
-	return cuota * -1
+	return Math.abs(cuota) * -1
 }
 
 function obtenerAmortizacion(numeroCuotaActual: number, numeroTotalCuotas: number, periodoGracia: string, cuota: number, interes: number): number {
@@ -113,9 +113,9 @@ function obtenerFlujoConIGV(igv: number, flujoBruto: number): number {
 	return flujo_con_igv
 }
 
-function obtenerFlujoNeto(flujoConIGV: number, ahorroTributario: number): number {
+function obtenerFlujoNeto(flujoBruto: number, ahorroTributario: number): number {
 	let flujo_neto = 0
-	flujo_neto = flujoConIGV - ahorroTributario
+	flujo_neto = flujoBruto - (ahorroTributario)
 	return flujo_neto
 }
 

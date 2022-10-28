@@ -1,6 +1,6 @@
 {
   "name": "leasing-app",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "private": true,
   "author": "Patrick Cuentas",
   "scripts": {
@@ -37,6 +37,7 @@
     "react-spinners": "^0.12.0",
     "react-table": "^7.8.0",
     "sweetalert2": "^11.4.33",
+    "uuid4": "^2.0.3",
     "yup": "0.32.8"
   },
   "devDependencies": {
@@ -47,6 +48,7 @@
     "@types/react-helmet": "^6.1.5",
     "@types/react-icons": "^3.0.0",
     "@types/react-table": "^7.7.12",
+    "@types/uuid4": "^2.0.0",
     "@vitejs/plugin-react": "^2.0.1",
     "commitlint": "^17.1.1",
     "env-cmd": "^10.1.0",

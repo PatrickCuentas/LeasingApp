@@ -12,18 +12,30 @@ import {
   BoxProps,
   FlexProps,
   Link,
-  Image,
 } from "@chakra-ui/react";
 import { FiHome, FiTrendingUp, FiSettings, FiMenu } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ReactNode, ReactText } from "react";
-import { Link as ReactRouterLink } from "react-router-dom";
+import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
   path: string;
 }
+interface NavItemProps extends FlexProps {
+  icon: IconType;
+  children: ReactText;
+  path: string;
+}
+interface MobileProps extends FlexProps {
+  onOpen: () => void;
+}
+
+interface SidebarProps extends BoxProps {
+  onClose: () => void;
+}
+
 const LinkItems: Array<LinkItemProps> = [
   { name: "Inicio", path: "/", icon: FiHome },
   { name: "Mis Prestamos", path: "/list", icon: FiTrendingUp },
@@ -60,12 +72,6 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default Sidebar;
-
-interface SidebarProps extends BoxProps {
-  onClose: () => void;
-}
-
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
@@ -86,7 +92,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       >
         <Box>
           <img
-            src="../../../public/logo-finanzas-removebg-preview.png"
+            src="/logo-finanzas-removebg-preview.png"
             alt=""
             style={{ maxWidth: "100%" }}
           />
@@ -102,28 +108,29 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   );
 };
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-  children: ReactText;
-  path: string;
-}
 const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
+  const location = useLocation();
+  const isActive = location.pathname === path;
+
   return (
-    <Link
-      as={ReactRouterLink}
-      to={path}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
+    <Link as={ReactRouterLink} to={path} style={{ textDecoration: "none" }}>
       <Flex
         align="center"
         p="4"
         mx="4"
         borderRadius="lg"
         role="group"
-        cursor="pointer"
+        cursor={isActive ? "" : "pointer"}
+        style={
+          isActive
+            ? {
+                backgroundColor: useColorModeValue("#2c7a7b", "#3182ce"),
+                color: useColorModeValue("white", ""),
+              }
+            : undefined
+        }
         _hover={{
-          bg: "cyan.400",
+          bg: useColorModeValue("teal.400", "blue.400"),
           color: "white",
         }}
         {...rest}
@@ -144,9 +151,6 @@ const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
   );
 };
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void;
-}
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
@@ -167,9 +171,16 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
 
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        Logo
+      <Text
+        fontSize={["md", "xl"]}
+        ml="8"
+        fontFamily="monospace"
+        fontWeight="bold"
+      >
+        Designed and Developed by Patrick 💸
       </Text>
     </Flex>
   );
 };
+
+export default Sidebar;

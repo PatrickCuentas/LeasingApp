@@ -25,7 +25,7 @@ import { FirebaseService } from "../../@auth/firebase/firebase.service";
 // interfaces
 import { IAuthRegisterErrors } from "lib/@auth/interfaces/Auth";
 
-//
+// utils
 import { getAuthRegisterErrors } from "lib/@auth/utils/authUtils";
 
 export default function Signup() {

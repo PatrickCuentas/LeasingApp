@@ -1,3 +1,7 @@
-.chakra-stack > button {
+.chakra-stack > button:not(:disabled) {
   color: #171923;
+}
+
+.chakra-stack > button:disabled {
+  color: white;
 }

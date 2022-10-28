@@ -2,33 +2,19 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   Input,
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FirebaseService } from "../../@auth/firebase/firebase.service";
-import { useFormik } from "formik";
-import Swal from "sweetalert2";
 
-// const swalAsync = () => {
-//   Swal.fire({
-//     title: "¿Estás seguro?",
-//     text: "No podrás revertir esta acción",
-//     icon: "warning",
-//     showCancelButton: true,
-//     confirmButtonColor: "#3085d6",
-//     cancelButtonColor: "#d33",
-//     confirmButtonText: "Sí, eliminar",
-//     cancelButtonText: "Cancelar",
-//   }).then((result) => {
-//     console.log(result);
-//     if (result.isConfirmed) {
-//       Swal.fire("Actualizado!", "El perfil ha sido actualizado.", "success");
-//     }
-//   });
-// };
+// Services
+import { FirebaseService } from "../../@auth/firebase/firebase.service";
+
+// Others
+import { useFormik } from "formik";
 
 export default function UserProfileEdit(): JSX.Element {
   const formik = useFormik({
@@ -90,7 +76,11 @@ export default function UserProfileEdit(): JSX.Element {
           <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
             Editar Perfil
           </Heading>
-          <FormControl isRequired>
+          <FormControl
+            isInvalid={
+              Boolean(formik.errors.displayName) && formik.touched.displayName
+            }
+          >
             <FormLabel htmlFor="displayName">Nickname</FormLabel>
             <Input
               _placeholder={{ color: "gray.500" }}
@@ -101,8 +91,13 @@ export default function UserProfileEdit(): JSX.Element {
               value={formik.values.displayName}
               type="text"
             />
+            {Boolean(formik.errors.displayName) && (
+              <FormErrorMessage>{formik.errors.displayName}</FormErrorMessage>
+            )}
           </FormControl>
-          <FormControl isRequired>
+          <FormControl
+            isInvalid={Boolean(formik.errors.email) && formik.touched.email}
+          >
             <FormLabel htmlFor="email">Correo electrónico</FormLabel>
             <Input
               _placeholder={{ color: "gray.500" }}
@@ -113,8 +108,15 @@ export default function UserProfileEdit(): JSX.Element {
               onChange={formik.handleChange}
               value={formik.values.email}
             />
+            {formik.errors.email && (
+              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+            )}
           </FormControl>
-          <FormControl isRequired>
+          <FormControl
+            isInvalid={
+              Boolean(formik.errors.password) && formik.touched.password
+            }
+          >
             <FormLabel>Contraseña</FormLabel>
             <Input
               _placeholder={{ color: "gray.500" }}
@@ -125,6 +127,9 @@ export default function UserProfileEdit(): JSX.Element {
               onChange={formik.handleChange}
               value={formik.values.password}
             />
+            {formik.errors.password && (
+              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+            )}
           </FormControl>
           <Button
             bg={"blue.400"}

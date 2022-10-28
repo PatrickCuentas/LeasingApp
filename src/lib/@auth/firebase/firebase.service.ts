@@ -32,7 +32,7 @@ const updateUserProfile = async (displayName: string, email: string, password: s
 
 		if (errorMessage === 'Firebase: Error (auth/requires-recent-login).' && user !== null) {
 			Swal.fire({
-				title: 'Ha pasado mucho tiempo desde que iniciaste sesión, por favor ingresa de nuevo tu contraseña',
+				title: 'Para actualizar tus credenciales debes ingresar tu contraseña actual para confirmar tu identidad',
 				input: 'text',
 				inputAttributes: {
 					autocapitalize: 'off'
@@ -82,7 +82,42 @@ const loginUserWithEmailAndPassword = async (
 		await signInWithEmailAndPassword(auth, email, password);
 		return true
 	} catch (error: any) {
-		const errorMessage = error.message;
+		let errorMessage = "";
+
+		switch (error.message) {
+			case "Firebase: Error (auth/user-not-found).":
+				errorMessage = "El usuario no existe";
+				break;
+			case "Firebase: Error (auth/wrong-password).":
+				errorMessage = "Contraseña incorrecta";
+				break;
+			case "Firebase: Error (auth/invalid-email).":
+				errorMessage = "El email no es válido";
+				break;
+			case "Firebase: Error (auth/too-many-requests).":
+				errorMessage = "Demasiados intentos fallidos, intenta más tarde";
+				break;
+			case "Firebase: Error (auth/user-disabled).":
+				errorMessage = "El usuario ha sido deshabilitado";
+				break;
+			case "Firebase: Error (auth/operation-not-allowed).":
+				errorMessage = "El inicio de sesión con email y contraseña no está habilitado";
+				break
+			case "Firebase: Error (auth/network-request-failed).":
+				errorMessage = "No hay conexión a internet";
+				break
+			case "Firebase: Error (auth/weak-password).":
+				errorMessage = "La contraseña debe tener al menos 6 caracteres";
+				break
+			case "Firebase: Error (auth/email-already-in-use).":
+				errorMessage = "El email ya está en uso";
+				break
+
+
+
+
+		}
+
 		Swal.fire({
 			icon: "error",
 			title: "Iniciar sesión",
@@ -113,7 +148,47 @@ const registerUserWithEmailAndPassword = async (
 		}
 		return true;
 	} catch (error: any) {
-		const errorMessage = error.message;
+		let errorMessage = "";
+
+		switch (error.message) {
+			case "Firebase: Error (auth/email-already-in-use).":
+				errorMessage = "El correo ya está en uso"
+				break;
+			case "Firebase: Error (auth/invalid-email).":
+				errorMessage = "El correo no es válido"
+				break;
+			case "Firebase: Error (auth/operation-not-allowed).":
+				errorMessage = "Operación no permitida"
+				break;
+			case "Firebase: Error (auth/weak-password).":
+				errorMessage = "La contraseña debe tener al menos 6 caracteres"
+				break;
+			case "Firebase: Error (auth/too-many-requests).":
+				errorMessage = "Demasiados intentos, intenta más tarde"
+				break
+			case "Firebase: Error (auth/invalid-credential).":
+				errorMessage = "Credenciales inválidas"
+				break
+			case "Firebase: Error (auth/user-disabled).":
+				errorMessage = "El usuario ha sido deshabilitado"
+				break
+			case "Firebase: Error (auth/user-not-found).":
+				errorMessage = "El usuario no existe"
+				break
+			case "Firebase: Error (auth/wrong-password).":
+				errorMessage = "Contraseña incorrecta"
+				break
+			case "Firebase: Error (auth/invalid-verification-code).":
+				errorMessage = "Código de verificación inválido"
+				break
+			case "Firebase: Error (auth/invalid-verification-id).":
+				errorMessage = "ID de verificación inválido"
+				break
+			case "Firebase: Error (auth/missing-verification-code).":
+				errorMessage = "Código de verificación faltante"
+				break
+		}
+
 		Swal.fire({
 			icon: "error",
 			title: "Oops...",

@@ -1,5 +1,5 @@
 import { LeasingEntryProps, LeasingFinalOutputProps, LeasingInitialOutputProps, LeasingTableProps } from "../interfaces/leasing";
-import { TABLE_EMPTY_ROW } from "../utils/initialStates";
+import { TABLE_EMPTY_ROW } from "../utils/states";
 import {
 	obtenerAhorroTributario,
 	obtenerAmortizacion,
@@ -16,17 +16,29 @@ import {
 	obtenerSaldoFinal,
 	obtenerSaldoInicial,
 	obtenerSeguroRiesgo,
-} from "./tableHelpers";
+} from "./tables";
 
 import {
+	calcularAmortizacionDelCapital,
+	calcularComisionesPeriodicas,
+	calcularDesembolsoTotal,
 	calcularIGV,
+	calcularIntereses,
 	calcularMontoDelLeasing,
 	calcularNumeroCuotasPorAnio,
 	calcularNumeroTotalDeCuotas,
 	calcularPorcentajeTEP,
+	calcularRecompra,
+	calcularSeguroContraTodoRiesgo,
 	calcularSeguroRiesgo,
+	calcularTCEAFlujoBruto,
+	calcularTCEAFlujoNeto,
 	calcularValorVentaActivo,
-} from "./resultHelpers";
+	calcularVANFlujoBruto,
+	calcularVANFlujoNeto,
+} from "./results";
+import { calcularTIRPorInterpolacion } from "./tir";
+import { calcularVNAFlujoBruto, calcularVNAFlujoNeto } from "./vna";
 
 const PORCENTAJE_IGV = 18;
 
@@ -51,7 +63,7 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 
 	for (let numeroCuotaActual = 1; numeroCuotaActual <= numeroTotalDeCuotas; numeroCuotaActual++) {
 		const id: string = numeroCuotaActual.toString();
-		const periodoGracia = currentTablaData[numeroCuotaActual]?.periodoGracia || "";
+		const periodoGracia = currentTablaData[numeroCuotaActual]?.periodoGracia;
 		const saldoInicial: number = obtenerSaldoInicial(
 			numeroCuotaActual,
 			numeroTotalDeCuotas,
@@ -113,6 +125,8 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 			depreciacion,
 			values.porcentajeImpuestoALaRenta
 		);
+
+
 		const igv: number = obtenerIGV(
 			cuota,
 			seguroRiesgo,
@@ -120,6 +134,7 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 			recompra,
 			PORCENTAJE_IGV
 		);
+
 		const flujoBruto: number = obtenerFlujoBruto(
 			cuota,
 			seguroRiesgo,
@@ -128,7 +143,7 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 		);
 		const flujoConIGV: number = obtenerFlujoConIGV(igv, flujoBruto);
 		const flujoNeto: number = obtenerFlujoNeto(
-			flujoConIGV,
+			flujoBruto,
 			ahorroTributario
 		);
 		const flujoTCEA: number = obtenerFlujoTCEA(cuota);
@@ -164,7 +179,6 @@ function calculateTableResults(
 	initialOutputResults: LeasingInitialOutputProps,
 	handleEndCalculation: (results: LeasingTableProps[]) => void
 ): LeasingTableProps[] {
-	// const PERIODO_GRACIA = "S";
 	const results: LeasingTableProps[] = [];
 
 	// Primera fila de la tabla
@@ -267,7 +281,7 @@ function calculateTableResults(
 		);
 		const flujoConIGV: number = obtenerFlujoConIGV(igv, flujoBruto);
 		const flujoNeto: number = obtenerFlujoNeto(
-			flujoConIGV,
+			flujoBruto,
 			ahorroTributario
 		);
 		const flujoTCEA: number = obtenerFlujoTCEA(cuota);
@@ -352,117 +366,76 @@ function calculateInitialOutputResults(values: LeasingEntryProps): LeasingInitia
 
 const calculateFinalOutputResults = (values: LeasingEntryProps, tableResults: LeasingTableProps[]): LeasingFinalOutputProps => {
 
-	const table_results = tableResults.slice(1, tableResults.length)
+	const table_results: LeasingTableProps[] = tableResults.slice(1, tableResults.length)
 
-	const intereses: number = table_results.reduce((acc, curr) => {
-		if (curr.periodoGracia !== 'T') {
-			return acc + parseFloat(curr.interes)
-		}
-		return acc;
-	}, 0);
+	const intereses: number = calcularIntereses(table_results);
+	const amortizacion: number = calcularAmortizacionDelCapital(table_results);
+	const seguroRiesgo: number = calcularSeguroContraTodoRiesgo(table_results);
+	const comision: number = calcularComisionesPeriodicas(table_results);
+	const recompra: number = calcularRecompra(table_results);
+	const desembolsoTotal: number = calcularDesembolsoTotal(intereses, amortizacion, seguroRiesgo, comision, recompra);
 
-	const amortizacion: number = table_results.reduce((acc, curr) => {
-		return acc + parseFloat(curr.amortizacion)
-	}, 0);
+	// Ya en porcentaje
+	const tir_TCEAFlujoBruto = calcularTIRPorInterpolacion(tableResults, "flujoBruto")
+	const tir_TCEAFlujoNeto = calcularTIRPorInterpolacion(tableResults, "flujoNeto")
+	const vna_VANFlujoBruto = calcularVNAFlujoBruto(values, tableResults, "flujoBruto")
+	const vna_VANFlujoNeto = calcularVNAFlujoNeto(values, tableResults, "flujoNeto")
 
-	const seguroRiesgo: number = table_results.reduce((acc, curr) => {
-		return acc + parseFloat(curr.seguroRiesgo);
-	}, 0);
+	const porcentajeTCEAFlujoBruto = calcularTCEAFlujoBruto(values, tir_TCEAFlujoBruto)
+	const porcentajeTCEAFlujoNeto = calcularTCEAFlujoNeto(values, tir_TCEAFlujoNeto)
+	const vanFlujoBruto = calcularVANFlujoBruto(tableResults, vna_VANFlujoBruto, 'flujoBruto')
+	const vanFlujoNeto = calcularVANFlujoNeto(tableResults, vna_VANFlujoNeto, 'flujoNeto')
 
-	const comision: number = table_results.reduce((acc, curr) => {
-		return acc + parseFloat(curr.comision);
-	}, 0);
-
-	const recompra: number = table_results.reduce((acc, curr) => {
-		return acc + parseFloat(curr.recompra);
-	}, 0);
-
-	const desembolsoTotal: number = intereses + amortizacion + seguroRiesgo + comision + recompra;
-
-	// !TODO Faltan calcular los valores para:
-
-	/*
-
-		Calculo del TIR
-		------
-
-		------
-
-		TCEA Flujo Bruto -> %
-			POTENCIA(1+TIR(N26:N326;1%);NDiasxAgno/frec)-1
-
-			(1 + TIR(Columna Flujo Bruto Tabla;1%) ) ^ (N de dias por anio / frecuencia de pago ) - 1
-
-		TCEA Flujo Neto -> %
-
-			POTENCIA(1+TIR(P26:P326;1%);NDiasxAgno/frec)-1
-
-			(1 + TIR(Columna Flujo Neto Tabla;1%) ) ^ (N de dias por anio / frecuencia de pago ) - 1
-
-
-		VAN Flujo Bruto -> -> double
-
-			N26+VNA((1+COK)^(frec/NDiasxAgno)-1;N27:N326)
-
-			Flujo Bruto P0 + VNA( (1 + COK) ^ (frecuencia de pago / n de dias por anio) - 1 , RANGO FLUJO BRUTO P1-PN
-
-
-		VAN Flujo Neto -> double
-
-			P26+VNA((1+WACC)^(frec/NDiasxAgno)-1;P27:P326)
-
-			Flujo Neto P0 + VNA( (1 + WACC) ^ (frecuencia de pago / n de dias por anio) - 1 , RANGO FLUJO NETO P1-PN
-*/
 
 	const results: LeasingFinalOutputProps = {
 		intereses: {
 			title: 'Intereses',
-			value: Math.abs(intereses),
+			value: intereses,
 			type: 'N'
 		},
 		amortizacionDelCapital: {
 			title: 'Amortización del capital',
-			value: Math.abs(amortizacion),
+			value: amortizacion,
 			type: 'N'
 		},
 		seguroContraTodoRiesgo: {
 			title: 'Seguro contra todo riesgo',
-			value: Math.abs(seguroRiesgo),
+			value: seguroRiesgo,
 			type: 'N'
 		},
 		comisionesPeriodicas: {
 			title: 'Comisiones periódicas',
-			value: Math.abs(comision),
+			value: comision,
 			type: 'N'
 		},
 		recompra: {
 			title: 'Recompra',
-			value: Math.abs(recompra),
+			value: recompra,
 			type: 'N'
 		},
 		desembolsoTotal: {
 			title: 'Desembolso total',
-			value: Math.abs(desembolsoTotal),
+			value: desembolsoTotal,
 			type: 'N'
 		},
 		tceaFlujoBruto: {
 			title: 'TCEA (Flujo bruto)',
-			value: 15.168,
+			value: porcentajeTCEAFlujoBruto,
 			type: 'P'
 		},
 		tceaFlujoNeto: {
 			title: 'TCEA (Flujo neto)',
-			value: -6.324,
+			value: porcentajeTCEAFlujoNeto,
 			type: 'P'
 		},
 		vanFlujoBruto: {
 			title: 'VAN (Flujo bruto)',
-			value: 318.36,
+			value: vanFlujoBruto,
 			type: 'N'
 		},
 		vanFlujoNeto: {
 			title: 'VAN (Flujo neto)',
-			value: 2504.49,
+			value: vanFlujoNeto,
 			type: 'N'
 		},
 	};
