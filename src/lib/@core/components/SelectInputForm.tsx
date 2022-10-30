@@ -40,6 +40,8 @@ const SelectInputForm = ({
         <InputGroup w="100%">
           {prefix && <InputLeftAddon children={prefix} />}
           <Select
+            id={id}
+            name={id}
             variant="filled"
             defaultValue={360}
             value={value}

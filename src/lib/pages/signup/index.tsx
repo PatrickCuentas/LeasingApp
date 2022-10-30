@@ -156,7 +156,7 @@ export default function Signup() {
               )}
             </FormControl>
             <FormControl isInvalid={passwordError.error} isRequired>
-              <FormLabel htmlFor="passowrd">Contraseña</FormLabel>
+              <FormLabel htmlFor="password">Contraseña</FormLabel>
               <InputGroup>
                 <Input
                   type={showPassword ? "text" : "password"}
@@ -212,6 +212,7 @@ export default function Signup() {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
+                aria-label="signup button"
                 type="submit"
                 loadingText="Submitting"
                 size="lg"

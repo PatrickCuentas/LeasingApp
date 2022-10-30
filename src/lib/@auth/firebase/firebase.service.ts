@@ -187,6 +187,8 @@ const registerUserWithEmailAndPassword = async (
 			case "Firebase: Error (auth/missing-verification-code).":
 				errorMessage = "Código de verificación faltante"
 				break
+			default:
+				errorMessage = "Error al crear la cuenta"
 		}
 
 		Swal.fire({

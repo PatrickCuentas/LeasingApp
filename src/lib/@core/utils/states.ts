@@ -72,22 +72,22 @@ export const TABLE_EMPTY_ROW = {
 }
 
 export const DEMO_ENTRY_DATA = {
-	precioVentaActivo: 11800,
-	nDeAnios: 3,
+	precioVentaActivo: 11800, 
+	nDeAnios: 3, 
 	frecuenciaDePago: 30,
-	nDiasPorAnio: 360,
-	porcentajeTEA: 12,
-	porcentajeImpuestoALaRenta: 30,
-	porcentajeRecompra: 1,
-	costesNotariales: 250,
-	costesRegistrales: 150,
-	tasacion: 80,
-	comisionDeEstudio: 100,
-	comisionDeActivacion: 50,
-	comisionPeriodica: 10,
-	porcentajeDeSeguroRiesgo: 0.30,
-	tasaDescuentoKS: 17.50,
-	tasaDescuentoWACC: 10.00,
+	nDiasPorAnio: 360, 
+	porcentajeTEA: 12, 
+	porcentajeImpuestoALaRenta: 30, 
+	porcentajeRecompra: 1, 
+	costesNotariales: 250, 
+	costesRegistrales: 150, 
+	tasacion: 80, 
+	comisionDeEstudio: 100, 
+	comisionDeActivacion: 50, 
+	comisionPeriodica: 10, 
+	porcentajeDeSeguroRiesgo: 0.30, 
+	tasaDescuentoKS: 17.50, 
+	tasaDescuentoWACC: 10, 
 }
 
 export const DEMO_INITIAL_OUTPUT_DATA = {
@@ -108,7 +108,7 @@ export const DEMO_INITIAL_OUTPUT_DATA = {
 	},
 	porcentajeTEP: {
 		title: 'Porcentaje TEP',
-		value: 0.9488793,
+		value: 0.9489,
 		type: 'P'
 	},
 	numeroCuotasPorAnio: {

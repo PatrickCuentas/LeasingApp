@@ -45,7 +45,6 @@ import {
   DEMO_FINAL_OUTPUT_DATA,
   DEMO_INITIAL_OUTPUT_DATA,
 } from "lib/@core/utils/states";
-import { parseToFloat } from "lib/@core/utils/parse";
 import { CONSTRAINTS } from "lib/@core/utils/contraints";
 import {
   nDiasPorAnioOptions,
@@ -81,17 +80,16 @@ const Home = () => {
     initialValues: DEMO_ENTRY_DATA as LeasingEntryProps,
     onSubmit: async (formData: LeasingEntryProps) => {
       await wait(100);
-      const values: LeasingEntryProps = parseToFloat(formData);
       const initialOutputResults: LeasingInitialOutputProps =
-        calculateInitialOutputResults(values);
+        calculateInitialOutputResults(formData);
       setInitialOutputResults(initialOutputResults);
       const table_results: LeasingTableProps[] = calculateTableResults(
-        values,
+        formData,
         initialOutputResults,
         handleEndTableCalculation
       );
       const finalOutputResults: LeasingFinalOutputProps =
-        calculateFinalOutputResults(values, table_results);
+        calculateFinalOutputResults(formData, table_results);
       setFinalOutputResultsState(finalOutputResults);
     },
     validate: (values: LeasingEntryProps) => {
@@ -113,7 +111,7 @@ const Home = () => {
   const handleChange = (e: any, id: string) => {
     setHasResults(false);
     setTableResults([]);
-    formik.setFieldValue(id, e);
+    formik.setFieldValue(id, parseFloat(e));
   };
 
   const radioInputHandler = (value: any) => async (index: any) => {
@@ -399,6 +397,7 @@ const Home = () => {
             </Flex>
             <Flex gap="100" py={8} justifyContent="center">
               <Button
+                aria-label="leasing button"
                 mt={8}
                 minW={"200px"}
                 size="lg"

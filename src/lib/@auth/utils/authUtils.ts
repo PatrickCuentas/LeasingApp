@@ -5,6 +5,10 @@ function validateEmail(email: string) {
 	return re.test(email);
 }
 
+function validatePassword(password: string) {
+	return password.length > 6;
+}
+
 export function getAuthLoginErrors(
 	email: string,
 	password: string
@@ -13,18 +17,18 @@ export function getAuthLoginErrors(
 		return {
 			email: {
 				error: email === "" ? true : false,
-				message: email === "" ? "Email is required" : "",
+				message: email === "" ? "Correo es requerido" : "",
 			},
 			password: {
 				error: password === "" ? true : false,
-				message: password === "" ? "Password is required" : "",
+				message: password === "" ? "Contraseña es requerida" : "",
 			},
 		};
 	} else if (email === "") {
 		return {
 			email: {
 				error: true,
-				message: "Email is required",
+				message: "Correo es requerido",
 			},
 			password: {
 				error: false,
@@ -39,7 +43,7 @@ export function getAuthLoginErrors(
 			},
 			password: {
 				error: true,
-				message: "Password is required",
+				message: "Contraseña es requerida",
 			},
 		};
 	} else {
@@ -65,22 +69,22 @@ export function getAuthRegisterErrors(
 		return {
 			email: {
 				error: email === "" ? true : false,
-				message: email === "" ? "Email is required" : "",
+				message: email === "" ? "Correo es requerido" : "",
 			},
 			password: {
 				error: password === "" ? true : false,
-				message: password === "" ? "Password is required" : "",
+				message: password === "" ? "Contraseña es requerida" : "",
 			},
 			confirmPassword: {
 				error: confirmPassword === "" ? true : false,
-				message: confirmPassword === "" ? "Confirm password is required" : "",
+				message: confirmPassword === "" ? "Contraseña es requerida" : "",
 			},
 		};
 	} else if (email === "") {
 		return {
 			email: {
 				error: true,
-				message: "Email is required",
+				message: "Correo es requerido",
 			},
 			password: {
 				error: false,
@@ -99,7 +103,7 @@ export function getAuthRegisterErrors(
 			},
 			password: {
 				error: true,
-				message: "Password is required",
+				message: "Contraseña es requerida",
 			},
 			confirmPassword: {
 				error: false,
@@ -118,7 +122,7 @@ export function getAuthRegisterErrors(
 			},
 			confirmPassword: {
 				error: true,
-				message: "Confirm password is required",
+				message: "Contraseña es requerida",
 			},
 		};
 	} else if (password !== confirmPassword) {
@@ -129,11 +133,11 @@ export function getAuthRegisterErrors(
 			},
 			password: {
 				error: true,
-				message: "Passwords do not match",
+				message: "Las contraseñas no coinciden",
 			},
 			confirmPassword: {
 				error: true,
-				message: "Passwords do not match",
+				message: "Las contraseñas no coinciden",
 			},
 		};
 	} else {
@@ -141,7 +145,7 @@ export function getAuthRegisterErrors(
 			return {
 				email: {
 					error: true,
-					message: "Invalid email",
+					message: "Email invalido",
 				},
 				password: {
 					error: false,
@@ -152,7 +156,39 @@ export function getAuthRegisterErrors(
 					message: "",
 				},
 			};
+		} else if (!validatePassword(password)) {
+			return {
+				email: {
+					error: false,
+					message: "",
+				},
+				password: {
+					error: true,
+					message: "La contraseña debe tener al menos 6 caracteres",
+				},
+				confirmPassword: {
+					error: false,
+					message: "",
+				},
+			};
+		} else if (!validatePassword(confirmPassword)) {
+			return {
+				email: {
+					error: false,
+					message: "",
+				},
+				password: {
+					error: false,
+					message: "",
+				},
+				confirmPassword: {
+					error: true,
+					message: "La contraseña debe tener al menos 6 caracteres",
+				},
+			};
 		}
+
+
 		return {
 			email: {
 				error: false,

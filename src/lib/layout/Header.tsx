@@ -23,7 +23,7 @@ const Header = () => {
         <ThemeToggle />
       </Box>
       <IconButton
-        aria-label="theme toggle"
+        aria-label="signout button"
         icon={<FaSignOutAlt />}
         onClick={handleSignOut}
       />

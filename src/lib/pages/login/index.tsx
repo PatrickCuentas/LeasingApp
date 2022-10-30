@@ -138,6 +138,7 @@ export default function Login() {
                 Registrate ahora!
               </Link>
               <Button
+                aria-label="login button"
                 bg={"blue.400"}
                 style={{ color: "white" }}
                 _hover={{
