@@ -112,10 +112,6 @@ const loginUserWithEmailAndPassword = async (
 			case "Firebase: Error (auth/email-already-in-use).":
 				errorMessage = "El email ya está en uso";
 				break
-
-
-
-
 		}
 
 		Swal.fire({
@@ -139,6 +135,7 @@ const registerUserWithEmailAndPassword = async (
 			await setDoc(doc(database, "users", credential.user.uid), {
 				fullname: fullname,
 				email: email,
+				leasings: [],
 				uid: credential.user.uid,
 			});
 		}

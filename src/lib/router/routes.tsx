@@ -4,6 +4,8 @@ import Home from "lib/pages/home";
 import Login from "lib/pages/login";
 import Signup from "lib/pages/signup";
 import UserProfileEdit from "lib/pages/profile";
+import LeasingList from "lib/pages/list";
+import { ThemeProvider } from "../pages/list/context/ThemeProvider";
 
 export const routes: Array<PathRouteProps> = [
   {
@@ -23,7 +25,11 @@ export const privateRoutes: Array<PathRouteProps> = [
   },
   {
     path: "/list",
-    element: <Home />,
+    element: (
+      <ThemeProvider>
+        <LeasingList />
+      </ThemeProvider>
+    ),
   },
   {
     path: "/edit",

@@ -15,6 +15,7 @@ import {
 
 // firebase
 import { auth } from "lib/@auth/firebase/firebaseConfig";
+import { saveLeasingToFirestore } from "../../@core/firebase";
 
 // react-icons
 import { ImArrowRight } from "react-icons/im";
@@ -60,6 +61,7 @@ import {
 } from "lib/@core/helpers/calculations";
 
 import "./index.css";
+import SaveLeasingDrawer from "./components/SaveLeasingDrawer";
 
 const MONEDA = "S/.";
 
@@ -75,6 +77,11 @@ const Home = () => {
     useState<LeasingFinalOutputProps>(DEMO_FINAL_OUTPUT_DATA);
   const [tableResults, setTableResults] = useState<LeasingTableProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const [leasingSavedState, setLeasingSavedState] = useState({
+    isSaved: false,
+    isSaving: false,
+  });
+  const { isSaved, isSaving } = leasingSavedState;
 
   const formik = useFormik({
     initialValues: DEMO_ENTRY_DATA as LeasingEntryProps,
@@ -111,6 +118,10 @@ const Home = () => {
   const handleChange = (e: any, id: string) => {
     setHasResults(false);
     setTableResults([]);
+    setLeasingSavedState({
+      isSaved: false,
+      isSaving: false,
+    });
     formik.setFieldValue(id, parseFloat(e));
   };
 
@@ -128,6 +139,25 @@ const Home = () => {
     const results = calculateFinalOutputResults(formik.values, newTableResults);
     setFinalOutputResultsState(results);
     setLoading(false);
+  };
+
+  const saveLeasingHandler = async (values: any) => {
+    setLeasingSavedState({
+      ...leasingSavedState,
+      isSaving: true,
+    });
+    await saveLeasingToFirestore(
+      values,
+      formik.values,
+      initialOutputResultsState,
+      finalOutputResultsState,
+      tableResults
+    );
+    setLeasingSavedState({
+      ...leasingSavedState,
+      isSaving: false,
+      isSaved: true,
+    });
   };
 
   const variants = {
@@ -413,23 +443,11 @@ const Home = () => {
                 Calcular
               </Button>
               {hasResults && (
-                <Button
-                  mt={8}
-                  minW={"200px"}
-                  gridColumnStart={1}
-                  gridColumnEnd={3}
-                  size="lg"
-                  isDisabled
-                  isLoading={formik.isSubmitting}
-                  bg={"rgba(255,99,71,1)"}
-                  color={"white"}
-                  _hover={{
-                    bg: "rgba(255,99,71,.7)",
-                  }}
-                  type="submit"
-                >
-                  Guardar
-                </Button>
+                <SaveLeasingDrawer
+                  isSaved={isSaved}
+                  isSaving={isSaving}
+                  handler={saveLeasingHandler}
+                />
               )}
             </Flex>
           </Box>
