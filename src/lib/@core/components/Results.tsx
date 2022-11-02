@@ -5,24 +5,30 @@ import { SimpleGrid } from "@chakra-ui/react";
 import Result from "lib/@core/components/Result";
 
 // Interfaces
-import { ResultItem } from "lib/@core/interfaces/leasing";
+import { PREFIX, ResultItem } from "lib/@core/interfaces/leasing";
 
 import { CountUp } from "countup.js";
 import { motion } from "framer-motion";
 
-const Results = ({ results, isLoading }: any) => {
+const Results = ({
+  results,
+  isLoading,
+}: {
+  results: any;
+  isLoading: boolean;
+}) => {
   const entries = Object.keys(results);
 
   useEffect(() => {
     if (isLoading) return;
 
-    entries.forEach((key) => {
+    entries.forEach((key: string) => {
       const value = results[key].value;
       const type = results[key].type;
       const countUp = new CountUp(key, value, {
-        decimalPlaces: type === "E" ? 0 : type === "N" ? 2 : 4,
-        prefix: type === "E" ? "" : type === "N" ? "S/." : "",
-        suffix: type === "E" ? "" : type === "P" ? "%" : "",
+        decimalPlaces: type === PREFIX.NONE ? 0 : type === PREFIX.MONEY ? 2 : 4,
+        prefix: type === PREFIX.MONEY ? PREFIX.MONEY : "",
+        suffix: type === PREFIX.PERCENTAGE ? " %" : "",
       });
       if (!countUp.error) {
         countUp.start();

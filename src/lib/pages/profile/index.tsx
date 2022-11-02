@@ -132,11 +132,11 @@ export default function UserProfileEdit(): JSX.Element {
             )}
           </FormControl>
           <Button
-            bg={"blue.400"}
+            bg={useColorModeValue("#2c7a7b", "#3182ce")}
             style={{ color: "white", marginTop: "30px" }}
             w="full"
             _hover={{
-              bg: "blue.500",
+              bg: useColorModeValue("teal.400", "blue.400"),
             }}
             type="submit"
           >

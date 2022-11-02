@@ -1,8 +1,8 @@
+#leasing-table {
+  border-radius: 4px;
+}
+
 .rdt_Table {
   font-family: "Plus Jakarta Sans";
   font-size: bold;
-}
-
-[aria-disabled="false"] > svg {
-  fill: tomato !important;
 }

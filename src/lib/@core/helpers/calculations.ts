@@ -1,4 +1,4 @@
-import { LeasingEntryProps, LeasingFinalOutputProps, LeasingInitialOutputProps, LeasingTableProps } from "../interfaces/leasing";
+import { LeasingEntryProps, LeasingFinalOutputProps, LeasingInitialOutputProps, LeasingTableProps, PREFIX } from "../interfaces/leasing";
 import { TABLE_EMPTY_ROW } from "../utils/states";
 import {
 	obtenerAhorroTributario,
@@ -327,37 +327,37 @@ function calculateInitialOutputResults(values: LeasingEntryProps): LeasingInitia
 		igv: {
 			title: 'IGV',
 			value: igv,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		valorVentaActivo: {
 			title: 'Valor de venta del activo',
 			value: valorVentaActivo,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		montoDelLeasing: {
 			title: 'Monto del leasing',
 			value: montoDelLeasing,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		porcentajeTEP: {
 			title: 'Porcentaje TEP',
 			value: porcentajeTEP,
-			type: 'P'
+			type: PREFIX.PERCENTAGE
 		},
 		numeroCuotasPorAnio: {
 			title: 'Número de cuotas por año',
 			value: numeroCuotasPorAnio,
-			type: 'E'
+			type: PREFIX.MONEY
 		},
 		numeroTotalDeCuotas: {
 			title: 'Número total de cuotas',
 			value: numeroTotalDeCuotas,
-			type: 'E'
+			type: PREFIX.MONEY
 		},
 		seguroRiesgo: {
 			title: 'Seguro de riesgo',
 			value: seguroRiesgo,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 	};
 
@@ -391,52 +391,52 @@ const calculateFinalOutputResults = (values: LeasingEntryProps, tableResults: Le
 		intereses: {
 			title: 'Intereses',
 			value: intereses,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		amortizacionDelCapital: {
 			title: 'Amortización del capital',
 			value: amortizacion,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		seguroContraTodoRiesgo: {
 			title: 'Seguro contra todo riesgo',
 			value: seguroRiesgo,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		comisionesPeriodicas: {
 			title: 'Comisiones periódicas',
 			value: comision,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		recompra: {
 			title: 'Recompra',
 			value: recompra,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		desembolsoTotal: {
 			title: 'Desembolso total',
 			value: desembolsoTotal,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		tceaFlujoBruto: {
 			title: 'TCEA (Flujo bruto)',
 			value: porcentajeTCEAFlujoBruto,
-			type: 'P'
+			type: PREFIX.PERCENTAGE
 		},
 		tceaFlujoNeto: {
 			title: 'TCEA (Flujo neto)',
 			value: porcentajeTCEAFlujoNeto,
-			type: 'P'
+			type: PREFIX.PERCENTAGE
 		},
 		vanFlujoBruto: {
 			title: 'VAN (Flujo bruto)',
 			value: vanFlujoBruto,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 		vanFlujoNeto: {
 			title: 'VAN (Flujo neto)',
 			value: vanFlujoNeto,
-			type: 'N'
+			type: PREFIX.MONEY
 		},
 	};
 

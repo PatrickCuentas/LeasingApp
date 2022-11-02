@@ -1,14 +1,117 @@
-import { Box, Tabs, TabPanel, Tab, TabList, TabPanels } from "@chakra-ui/react";
-import { ResultItem } from "lib/@core/interfaces/leasing";
-import DataTable from "react-data-table-component";
+import {
+  Box,
+  Tabs,
+  TabPanel,
+  Tab,
+  TabList,
+  TabPanels,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { PREFIX, ResultItem } from "lib/@core/interfaces/leasing";
+import DataTable, { createTheme } from "react-data-table-component";
 import { CustomTooltip } from "./CustomTooltip";
+import {
+  LeasingEntryProps,
+  LeasingTableProps,
+} from "../../../@core/interfaces/leasing";
 
-const ExpandedComponent = ({ data }: any) => {
-  const entryData = Object.keys(data?.entryData).map((key: any) => {
+interface IData {
+  entryData: LeasingEntryProps;
+  outputResults: any;
+  tableResults: LeasingTableProps[];
+}
+
+const formatCurrency = (value: number, prefix: string): string => {
+  if (prefix === PREFIX.MONEY) {
+    return new Intl.NumberFormat("es-PE", {
+      style: "currency",
+      currency: "PEN",
+    }).format(value);
+  } else if (prefix === PREFIX.PERCENTAGE) {
+    return `${value.toFixed(4)} %`;
+  } else {
+    return value.toString();
+  }
+};
+
+const ExpandedComponent = ({ data }: { data: IData }) => {
+  const entryDataOptions = {
+    precioVentaActivo: {
+      title: "Precio de venta del activo",
+      prefix: PREFIX.MONEY,
+    },
+    nDeAnios: {
+      title: "N° de años",
+      prefix: PREFIX.NONE,
+    },
+    frecuenciaDePago: {
+      title: "Frecuencia de pago",
+      prefix: PREFIX.NONE,
+    },
+    nDiasPorAnio: {
+      title: "N° de días por año",
+      prefix: PREFIX.NONE,
+    },
+    porcentajeTEA: {
+      title: "Porcentaje TEA",
+      prefix: PREFIX.PERCENTAGE,
+    },
+    porcentajeImpuestoALaRenta: {
+      title: "Porcentaje impuesto a la renta",
+      prefix: PREFIX.PERCENTAGE,
+    },
+    porcentajeRecompra: {
+      title: "Porcentaje recompra",
+      prefix: PREFIX.PERCENTAGE,
+    },
+    costesNotariales: {
+      title: "Costes notariales",
+      prefix: PREFIX.MONEY,
+    },
+    costesRegistrales: {
+      title: "Costes registrales",
+      prefix: PREFIX.MONEY,
+    },
+    tasacion: {
+      title: "Tasación",
+      prefix: PREFIX.MONEY,
+    },
+    comisionDeEstudio: {
+      title: "Comisión de estudio",
+      prefix: PREFIX.MONEY,
+    },
+    comisionDeActivacion: {
+      title: "Comisión de activación",
+      prefix: PREFIX.MONEY,
+    },
+    comisionPeriodica: {
+      title: "Comisión periódica",
+      prefix: PREFIX.MONEY,
+    },
+    porcentajeDeSeguroRiesgo: {
+      title: "Porcentaje de seguro de riesgo",
+      prefix: PREFIX.PERCENTAGE,
+    },
+    tasaDescuentoKS: {
+      title: "Tasa de descuento KS",
+      prefix: PREFIX.PERCENTAGE,
+    },
+    tasaDescuentoWACC: {
+      title: "Tasa de descuento WACC",
+      prefix: PREFIX.PERCENTAGE,
+    },
+  };
+
+  const entryData = Object.keys(data?.entryData).map((key: string) => {
+    const value = data?.entryData[key as keyof LeasingEntryProps];
+
     return {
       id: key,
-      title: key,
-      value: data?.entryData[key],
+      title: entryDataOptions[key as keyof LeasingEntryProps].title,
+      value: formatCurrency(
+        value,
+        entryDataOptions[key as keyof LeasingEntryProps].prefix
+      ),
     };
   });
 
@@ -17,7 +120,7 @@ const ExpandedComponent = ({ data }: any) => {
     return {
       id: key,
       title: item.title,
-      value: item.value,
+      value: formatCurrency(item.value, item.type),
     };
   });
 
@@ -93,47 +196,87 @@ const ExpandedComponent = ({ data }: any) => {
   ];
 
   return (
-    <Tabs isFitted variant="enclosed" mt={2}>
+    <Tabs isFitted variant="line" orientation="vertical" minHeight={700} isLazy>
       <TabList>
-        <Tab>Datos Iniciales</Tab>
-        <Tab>Datos Finales</Tab>
-        <Tab>Tabla de cuotas</Tab>
+        <Tab
+          style={{ minWidth: "180px" }}
+          _selected={{
+            backgroundColor: useColorModeValue("#2c7a7b", "#3182ce"),
+          }}
+        >
+          Datos Iniciales
+        </Tab>
+        <Tab
+          style={{ minWidth: "180px" }}
+          _selected={{
+            backgroundColor: useColorModeValue("#2c7a7b", "#3182ce"),
+          }}
+        >
+          Datos Finales
+        </Tab>
+        <Tab
+          style={{ minWidth: "180px" }}
+          _selected={{
+            backgroundColor: useColorModeValue("#2c7a7b", "#3182ce"),
+          }}
+        >
+          Tabla de cuotas
+        </Tab>
       </TabList>
       <TabPanels>
         <TabPanel>
-          {entryData.map((item: any) => {
-            return (
-              <Box
-                key={item.id}
-                mx={2}
-                display="flex"
-                justifyContent="space-between"
-              >
-                <Box as="span" mr={2}>
-                  {item.title}
+          {entryData.map(
+            (item: { id: string; title: string; value: string }) => {
+              return (
+                <Box
+                  key={item.id}
+                  mx={16}
+                  my={3}
+                  display="flex"
+                  justifyContent="space-between"
+                >
+                  <Box as="span" mr={2}>
+                    {item.title}
+                  </Box>
+                  <Box as="span">{item.value}</Box>
                 </Box>
-                <Box as="span">{item.value.toFixed(2)}</Box>
-              </Box>
-            );
-          })}
+              );
+            }
+          )}
         </TabPanel>
         <TabPanel>
-          {outputResults.map((item: any) => {
-            return (
-              <Box key={item.id} display="flex" justifyContent="space-between">
-                <Box as="span">{item.title}</Box>
-                <Box as="span">{item.value.toFixed(2)}</Box>
-              </Box>
-            );
-          })}
+          {outputResults.map(
+            (item: { id: string; title: string; value: string }) => {
+              return (
+                <Box
+                  key={item.id}
+                  display="flex"
+                  mx={16}
+                  my={3}
+                  justifyContent="space-between"
+                >
+                  <Box as="span">{item.title}</Box>
+                  <Box as="span">{item.value}</Box>
+                </Box>
+              );
+            }
+          )}
         </TabPanel>
         <TabPanel>
-          <DataTable
-            columns={tableColumns}
-            data={data?.tableResults}
-            theme="customDark"
-            pagination
-          />
+          <Box mx={16} my={4}>
+            <DataTable
+              columns={tableColumns}
+              data={data?.tableResults}
+              theme="customDark"
+              pagination
+              paginationComponentOptions={{
+                rowsPerPageText: "Filas por página:",
+                rangeSeparatorText: "de",
+                selectAllRowsItem: true,
+                selectAllRowsItemText: "Todos",
+              }}
+            />
+          </Box>
         </TabPanel>
       </TabPanels>
     </Tabs>

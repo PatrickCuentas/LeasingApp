@@ -1,5 +1,11 @@
+export enum PREFIX {
+	MONEY = "S/.",
+	PERCENTAGE = "%",
+	NONE = "",
+}
+
 export interface ResultItem {
-	type: string;
+	type: PREFIX;
 	value: number
 	title: string;
 }
@@ -42,10 +48,10 @@ export interface LeasingFinalOutputProps {
 	comisionesPeriodicas: ResultItem;
 	recompra: ResultItem;
 	desembolsoTotal: ResultItem;
-	tceaFlujoBruto?: ResultItem;
-	tceaFlujoNeto?: ResultItem;
-	vanFlujoBruto?: ResultItem;
-	vanFlujoNeto?: ResultItem;
+	tceaFlujoBruto: ResultItem;
+	tceaFlujoNeto: ResultItem;
+	vanFlujoBruto: ResultItem;
+	vanFlujoNeto: ResultItem;
 }
 
 export interface LeasingEntryProps {

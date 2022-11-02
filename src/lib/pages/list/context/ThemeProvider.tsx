@@ -1,33 +1,30 @@
 import { createContext } from "react";
 import { createTheme } from "react-data-table-component";
-import { useColorMode } from "@chakra-ui/react";
 
 export const ThemeContext = createContext({
   customStyles: {},
 });
 
 export const ThemeProvider = ({ children }: any) => {
-  const { colorMode } = useColorMode();
-
   createTheme(
     "customDark",
     {
       text: {
-        primary: colorMode === "dark" ? "#a0aec0" : "dark",
-        secondary: "#a0aec0",
+        primary: "white",
+        secondary: "white",
       },
       background: {
-        default: colorMode === "dark" ? "#171923" : "white",
+        default: "#2d3748",
       },
       context: {
-        background: colorMode === "dark" ? "#171923" : "white",
-        text: colorMode === "dark" ? "#a0aec0" : "dark",
+        background: "#2d3748",
+        text: "white",
       },
       divider: {
-        default: colorMode === "dark" ? "#2d3748" : "transparent",
+        default: "white",
       },
       action: {
-        button: "rgba(0,0,0,.54)",
+        button: "red",
         hover: "rgba(0,0,0,.08)",
         disabled: "rgba(0,0,0,.12)",
       },

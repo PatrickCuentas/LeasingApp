@@ -132,10 +132,8 @@ const LeasingTablePaginated = (props: any) => {
     if (data.length === 0) return [];
 
     return data.map((item: LeasingTableProps, i: number) => {
-      const id = uuid4();
       return {
         ...item,
-        key: id,
         periodoGracia:
           i === data.length - 1 ? (
             <LastRadioInputForm />

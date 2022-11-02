@@ -205,7 +205,7 @@ const Home = () => {
         >
           Leasing Financiero por el
           <Highlight
-            query="método Frances"
+            query="método Francés"
             styles={{
               px: "2",
               py: "1",
@@ -214,7 +214,7 @@ const Home = () => {
               marginLeft: "0.5rem",
             }}
           >
-            método Frances
+            método Francés
           </Highlight>
         </Heading>
         <form onSubmit={formik.handleSubmit}>
@@ -272,6 +272,7 @@ const Home = () => {
                       handleChange={handleChange}
                       prefix={"Dias"}
                       options={frecuenciaDePagoOptions}
+                      contraints={CONSTRAINTS.frecuenciaDePago}
                     />
                     <SelectInputForm
                       id="nDiasPorAnio"
@@ -280,6 +281,7 @@ const Home = () => {
                       handleChange={handleChange}
                       prefix={"Dias"}
                       options={nDiasPorAnioOptions}
+                      contraints={CONSTRAINTS.nDiasPorAnio}
                     />
                     <NumberInputForm
                       id="porcentajeTEA"
@@ -425,7 +427,12 @@ const Home = () => {
                 )}
               </Grid>
             </Flex>
-            <Flex gap="100" py={8} justifyContent="center">
+            <Flex
+              flexDirection={["column", "column", "row"]}
+              gap={[10, 10, 100]}
+              py={8}
+              justifyContent="center"
+            >
               <Button
                 aria-label="leasing button"
                 mt={8}

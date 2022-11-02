@@ -43,7 +43,7 @@ const SaveLeasingDrawer = ({ isSaved, isSaving, handler }: any) => {
   return (
     <>
       <Button
-        mt={8}
+        mt={[0, 0, 8]}
         minW={"200px"}
         gridColumnStart={1}
         gridColumnEnd={3}

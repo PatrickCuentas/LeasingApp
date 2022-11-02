@@ -1,5 +1,13 @@
 import { useState, useEffect, useContext } from "react";
-import { Box, Button, Icon, Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Icon,
+  Text,
+  useColorModeValue,
+  useMediaQuery,
+} from "@chakra-ui/react";
 
 //firebase
 import {
@@ -26,13 +34,15 @@ import { GridLoader } from "react-spinners";
 
 // css
 import "./index.css";
-import { useNavigate } from "react-router-dom";
 
 const LeasingList = () => {
   const [pending, setPending] = useState(true);
-  const [rows, setRows] = useState<any>([]);
+  const [rows, setRows] = useState([]);
   const { customStyles } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [isLargerThan480] = useMediaQuery("(min-width: 480px)");
+  const [isLargerThan1280] = useMediaQuery("(min-width: 1280px)");
+
   const handleBackToHome = () => navigate("/");
 
   const tooglePending = () => {
@@ -41,13 +51,13 @@ const LeasingList = () => {
 
   const columns = [
     {
-      name: "Titulo",
+      name: "Título",
       selector: (row: any) => row.titulo,
       sortable: true,
       minWidth: "200px",
     },
     {
-      name: "Fecha de creacion",
+      name: "Fecha de creación",
       selector: (row: any) => row?.fechaCreacion,
       sortable: true,
       minWidth: "200px",
@@ -57,7 +67,8 @@ const LeasingList = () => {
       cell: (row: any) => (
         <>
           <Button
-            colorScheme="gray"
+            colorScheme="white"
+            variant="ghost"
             onClick={() => deleteLeasingToFirestore(row.id, tooglePending)}
           >
             <Icon as={FiTrash2} />
@@ -70,7 +81,7 @@ const LeasingList = () => {
 
   useEffect(() => {
     loadUserDocumentFromFirestore().then((data: any) => {
-      const leasings = data.leasings;
+      const { leasings } = data;
       const rowsMapped = leasings.map((item: any, i: any) => {
         return {
           id: item.uid || i + 1,
@@ -89,9 +100,8 @@ const LeasingList = () => {
   }, [pending]);
 
   return (
-    <Box mx={16} my={4} id="leasing-table">
+    <Box mx={[0, 0, 16]} my={4} id="leasing-table">
       <DataTable
-        title="Leasings"
         columns={columns}
         data={rows}
         expandableRows
@@ -105,11 +115,14 @@ const LeasingList = () => {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            background="transparent"
           >
-            <GridLoader color="tomato" size={40} />
+            <GridLoader
+              color="tomato"
+              size={isLargerThan1280 ? 40 : isLargerThan480 ? 30 : 20}
+            />
           </Box>
         }
-        // custom empty message
         noDataComponent={
           <Box
             display="flex"

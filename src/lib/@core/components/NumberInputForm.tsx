@@ -75,7 +75,7 @@ function VerticallyCenter({ title, body }: any) {
   return (
     <>
       <InfoOutlineIcon onClick={onOpen} cursor="pointer" />
-      <Modal onClose={onClose} isOpen={isOpen} isCentered allowPinchZoom>
+      <Modal onClose={onClose} isOpen={isOpen} size={["xs","sm","md"]} isCentered allowPinchZoom>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>

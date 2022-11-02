@@ -8,10 +8,11 @@ const Footer = () => {
       align="center"
       alignSelf="flex-end"
       justifyContent="center"
+      minH={["3rem", "4rem"]}
     >
       <Text fontSize="xs">
         {new Date().getFullYear()} -{" "}
-        <Link href="#" isExternal>
+        <Link href="https://github.com/PatrickCuentas" isExternal>
           patrick.dev
         </Link>
       </Text>

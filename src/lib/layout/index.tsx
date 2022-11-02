@@ -5,6 +5,7 @@ import Header from "./Header";
 import Meta from "./Meta";
 
 import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 
 type LayoutProps = {
   children: ReactNode;
@@ -22,6 +23,7 @@ const Layout = ({ children }: LayoutProps) => {
           </Sidebar>
         </Box>
       </Flex>
+      <Footer />
     </Box>
   );
 };
