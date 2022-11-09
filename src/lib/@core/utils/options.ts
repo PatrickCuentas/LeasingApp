@@ -27,6 +27,10 @@ export const frecuenciaDePagoOptions = [
 		label: "Mensual",
 	},
 	{
+		value: 60,
+		label: "Bimestral"
+	},
+	{
 		value: 90,
 		label: "Trimestral",
 	},

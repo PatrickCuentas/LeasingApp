@@ -6,9 +6,10 @@ import {
   TabList,
   TabPanels,
   useColorModeValue,
+  Text,
 } from "@chakra-ui/react";
 import { PREFIX, ResultItem } from "lib/@core/interfaces/leasing";
-import DataTable, { createTheme } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import { CustomTooltip } from "./CustomTooltip";
 import {
   LeasingEntryProps,
@@ -126,71 +127,71 @@ const ExpandedComponent = ({ data }: { data: IData }) => {
 
   const tableColumns = [
     {
-      name: "N°",
-      selector: (row: any) => row.id,
+      name: <Text fontSize={"11"}>N°</Text>,
+      selector: (row: any) => <Box>{row.id}</Box>,
     },
     {
-      name: "Periodo de Gracia",
+      name: <Text fontSize={"11"}>Periodo de Gracia</Text>,
       cell: (row: any) => <CustomTooltip periodoGracia={row.periodoGracia} />,
     },
     {
-      name: "Saldo Inicial",
+      name: <Text fontSize={"11"}>Saldo Inicial</Text>,
       selector: (row: any) => row.saldoInicial,
     },
     {
-      name: "Interes",
+      name: <Text fontSize={"11"}>Interes</Text>,
       selector: (row: any) => row.interes,
     },
     {
-      name: "Cuota",
+      name: <Text fontSize={"11"}>Cuota</Text>,
       selector: (row: any) => row.cuota,
     },
     {
-      name: "Amortizacion",
+      name: <Text fontSize={"11"}>Amortizacion</Text>,
       selector: (row: any) => row.amortizacion,
     },
     {
-      name: "Seguro Riesgo",
+      name: <Text fontSize={"11"}>Seguro Riesgo</Text>,
       selector: (row: any) => row.seguroRiesgo,
     },
     {
-      name: "Comision",
+      name: <Text fontSize={"11"}>Comision</Text>,
       selector: (row: any) => row.comision,
     },
     {
-      name: "Recompra",
+      name: <Text fontSize={"11"}>Recompra</Text>,
       selector: (row: any) => row.recompra,
     },
     {
-      name: "Saldo Final",
+      name: <Text fontSize={"11"}>Saldo Final</Text>,
       selector: (row: any) => row.saldoFinal,
     },
     {
-      name: "Depreciacion",
+      name: <Text fontSize={"11"}> Depreciacion</Text>,
       selector: (row: any) => row.depreciacion,
     },
     {
-      name: "Ahorro Tributario",
+      name: <Text fontSize={"11"}> Ahorro Tributario</Text>,
       selector: (row: any) => row.ahorroTributario,
     },
     {
-      name: "IGV",
+      name: <Text fontSize={"11"}> IGV</Text>,
       selector: (row: any) => row.igv,
     },
     {
-      name: "Flujo Bruto",
+      name: <Text fontSize={"11"}> Flujo Bruto</Text>,
       selector: (row: any) => row.flujoBruto,
     },
     {
-      name: "Flujo con IGV",
+      name: <Text fontSize={"11"}> Flujo con IGV</Text>,
       selector: (row: any) => row.flujoConIGV,
     },
     {
-      name: "Flujo Neto",
+      name: <Text fontSize={"11"}> Flujo Neto</Text>,
       selector: (row: any) => row.flujoNeto,
     },
     {
-      name: "Flujo TCEA",
+      name: <Text fontSize={"11"}> Flujo TCEA</Text>,
       selector: (row: any) => row.flujoTCEA,
     },
   ];

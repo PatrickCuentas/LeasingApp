@@ -140,6 +140,9 @@ export const CONSTRAINTS = {
             "Es la cantidad de días que entre cada pago a realizar dentro del número de años.",
           ],
           options: [
+            "Diario: 1 día",
+            "Semanal: 7 días",
+            "Quincenal: 15 días",
             "Mensual: 30 días",
             "Bimestral: 60 días",
             "Trimestral: 90 días",

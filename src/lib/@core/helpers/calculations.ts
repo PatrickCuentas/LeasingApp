@@ -41,6 +41,7 @@ import { calcularTIRPorInterpolacion } from "./tir";
 import { calcularVNAFlujoBruto, calcularVNAFlujoNeto } from "./vna";
 
 const PORCENTAJE_IGV = 18;
+const TABLE_DECIMALS = 2;
 
 function recalculateTableResults(currentTablaData: LeasingTableProps[], values: LeasingEntryProps, initialOutputResults: LeasingInitialOutputProps): LeasingTableProps[] {
 	const results: LeasingTableProps[] = [];
@@ -152,21 +153,21 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 			...TABLE_EMPTY_ROW,
 			id: id,
 			periodoGracia: periodoGracia,
-			saldoInicial: saldoInicial.toFixed(2),
-			interes: interes.toFixed(2),
-			cuota: cuota.toFixed(2),
-			amortizacion: amortizacion.toFixed(2),
-			seguroRiesgo: seguroRiesgo.toFixed(2),
-			comision: comision.toFixed(2),
-			recompra: recompra.toFixed(2),
-			saldoFinal: saldoFinal.toFixed(2),
-			depreciacion: depreciacion.toFixed(2),
-			ahorroTributario: ahorroTributario.toFixed(2),
-			igv: igv.toFixed(2),
-			flujoBruto: flujoBruto.toFixed(2),
-			flujoConIGV: flujoConIGV.toFixed(2),
-			flujoNeto: flujoNeto.toFixed(2),
-			flujoTCEA: flujoTCEA.toFixed(2),
+			saldoInicial: saldoInicial.toFixed(TABLE_DECIMALS),
+			interes: interes.toFixed(TABLE_DECIMALS),
+			cuota: cuota.toFixed(TABLE_DECIMALS),
+			amortizacion: amortizacion.toFixed(TABLE_DECIMALS),
+			seguroRiesgo: seguroRiesgo.toFixed(TABLE_DECIMALS),
+			comision: comision.toFixed(TABLE_DECIMALS),
+			recompra: recompra.toFixed(TABLE_DECIMALS),
+			saldoFinal: saldoFinal.toFixed(TABLE_DECIMALS),
+			depreciacion: depreciacion.toFixed(TABLE_DECIMALS),
+			ahorroTributario: ahorroTributario.toFixed(TABLE_DECIMALS),
+			igv: igv.toFixed(TABLE_DECIMALS),
+			flujoBruto: flujoBruto.toFixed(TABLE_DECIMALS),
+			flujoConIGV: flujoConIGV.toFixed(TABLE_DECIMALS),
+			flujoNeto: flujoNeto.toFixed(TABLE_DECIMALS),
+			flujoTCEA: flujoTCEA.toFixed(TABLE_DECIMALS),
 		};
 		results.push(row);
 	}
@@ -177,7 +178,6 @@ function recalculateTableResults(currentTablaData: LeasingTableProps[], values: 
 function calculateTableResults(
 	values: LeasingEntryProps,
 	initialOutputResults: LeasingInitialOutputProps,
-	handleEndCalculation: (results: LeasingTableProps[]) => void
 ): LeasingTableProps[] {
 	const results: LeasingTableProps[] = [];
 
@@ -290,25 +290,24 @@ function calculateTableResults(
 			...TABLE_EMPTY_ROW,
 			id: id,
 			periodoGracia: periodoGracia,
-			saldoInicial: saldoInicial.toFixed(2),
-			interes: interes.toFixed(2),
-			cuota: cuota.toFixed(2),
-			amortizacion: amortizacion.toFixed(2),
-			seguroRiesgo: seguroRiesgo.toFixed(2),
-			comision: comision.toFixed(2),
-			recompra: recompra.toFixed(2),
-			saldoFinal: saldoFinal.toFixed(2),
-			depreciacion: depreciacion.toFixed(2),
-			ahorroTributario: ahorroTributario.toFixed(2),
-			igv: igv.toFixed(2),
-			flujoBruto: flujoBruto.toFixed(2),
-			flujoConIGV: flujoConIGV.toFixed(2),
-			flujoNeto: flujoNeto.toFixed(2),
-			flujoTCEA: flujoTCEA.toFixed(2),
+			saldoInicial: saldoInicial.toFixed(TABLE_DECIMALS),
+			interes: interes.toFixed(TABLE_DECIMALS),
+			cuota: cuota.toFixed(TABLE_DECIMALS),
+			amortizacion: amortizacion.toFixed(TABLE_DECIMALS),
+			seguroRiesgo: seguroRiesgo.toFixed(TABLE_DECIMALS),
+			comision: comision.toFixed(TABLE_DECIMALS),
+			recompra: recompra.toFixed(TABLE_DECIMALS),
+			saldoFinal: saldoFinal.toFixed(TABLE_DECIMALS),
+			depreciacion: depreciacion.toFixed(TABLE_DECIMALS),
+			ahorroTributario: ahorroTributario.toFixed(TABLE_DECIMALS),
+			igv: igv.toFixed(TABLE_DECIMALS),
+			flujoBruto: flujoBruto.toFixed(TABLE_DECIMALS),
+			flujoConIGV: flujoConIGV.toFixed(TABLE_DECIMALS),
+			flujoNeto: flujoNeto.toFixed(TABLE_DECIMALS),
+			flujoTCEA: flujoTCEA.toFixed(TABLE_DECIMALS),
 		};
 		results.push(row);
 	}
-	handleEndCalculation(results)
 
 	return results as LeasingTableProps[];
 };
@@ -347,12 +346,12 @@ function calculateInitialOutputResults(values: LeasingEntryProps): LeasingInitia
 		numeroCuotasPorAnio: {
 			title: 'Número de cuotas por año',
 			value: numeroCuotasPorAnio,
-			type: PREFIX.MONEY
+			type: PREFIX.NONE
 		},
 		numeroTotalDeCuotas: {
 			title: 'Número total de cuotas',
 			value: numeroTotalDeCuotas,
-			type: PREFIX.MONEY
+			type: PREFIX.NONE
 		},
 		seguroRiesgo: {
 			title: 'Seguro de riesgo',
@@ -385,7 +384,6 @@ const calculateFinalOutputResults = (values: LeasingEntryProps, tableResults: Le
 	const porcentajeTCEAFlujoNeto = calcularTCEAFlujoNeto(values, tir_TCEAFlujoNeto)
 	const vanFlujoBruto = calcularVANFlujoBruto(tableResults, vna_VANFlujoBruto, 'flujoBruto')
 	const vanFlujoNeto = calcularVANFlujoNeto(tableResults, vna_VANFlujoNeto, 'flujoNeto')
-
 
 	const results: LeasingFinalOutputProps = {
 		intereses: {

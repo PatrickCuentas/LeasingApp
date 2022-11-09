@@ -1,13 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Icon,
-  Text,
-  useColorModeValue,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Box, Button, Icon, Skeleton, Text } from "@chakra-ui/react";
 
 //firebase
 import {
@@ -30,24 +23,18 @@ import { FiFrown } from "react-icons/fi";
 // others
 import moment from "moment";
 import { FiTrash2 } from "react-icons/fi";
-import { GridLoader } from "react-spinners";
 
 // css
 import "./index.css";
 
 const LeasingList = () => {
-  const [pending, setPending] = useState(true);
+  const [pending, setPending] = useState(false);
   const [rows, setRows] = useState([]);
   const { customStyles } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const [isLargerThan480] = useMediaQuery("(min-width: 480px)");
-  const [isLargerThan1280] = useMediaQuery("(min-width: 1280px)");
 
   const handleBackToHome = () => navigate("/");
-
-  const tooglePending = () => {
-    setPending(!pending);
-  };
+  const tooglePending = () => setPending(!pending);
 
   const columns = [
     {
@@ -95,50 +82,37 @@ const LeasingList = () => {
         };
       });
       setRows(rowsMapped);
-      setPending(false);
+      setPending(true);
     });
   }, [pending]);
 
   return (
     <Box mx={[0, 0, 16]} my={4} id="leasing-table">
-      <DataTable
-        columns={columns}
-        data={rows}
-        expandableRows
-        expandableRowsComponent={ExpandedComponent}
-        theme="customDark"
-        customStyles={customStyles}
-        progressPending={pending}
-        progressComponent={
-          <Box
-            minH="70vh"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            background="transparent"
-          >
-            <GridLoader
-              color="tomato"
-              size={isLargerThan1280 ? 40 : isLargerThan480 ? 30 : 20}
-            />
-          </Box>
-        }
-        noDataComponent={
-          <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            h="300px"
-          >
-            <Icon as={FiFrown} w={10} h={10} />
-            <Text mb={4} mt={2}>
-              No hay nada por aquí.
-            </Text>
-            <Button onClick={handleBackToHome}>Quiero crear uno</Button>
-          </Box>
-        }
-      />
+      <Skeleton height="70vh" isLoaded={pending} fadeDuration={1}>
+        <DataTable
+          columns={columns}
+          data={rows}
+          expandableRows
+          expandableRowsComponent={ExpandedComponent}
+          theme="customDark"
+          customStyles={customStyles}
+          noDataComponent={
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              h="300px"
+            >
+              <Icon as={FiFrown} w={10} h={10} />
+              <Text mb={4} mt={2}>
+                No hay nada por aquí.
+              </Text>
+              <Button onClick={handleBackToHome}>Quiero crear uno</Button>
+            </Box>
+          }
+        />
+      </Skeleton>
     </Box>
   );
 };

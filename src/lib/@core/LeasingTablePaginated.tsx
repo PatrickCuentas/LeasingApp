@@ -2,7 +2,13 @@ import { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 
 // Chakra UI
-import { Box, Heading, Tooltip, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Skeleton,
+  Tooltip,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { Table } from "react-chakra-pagination";
 
 // Components
@@ -58,7 +64,7 @@ const LeasingTablePaginated = (props: any) => {
   // Accessor to get a data in bound object
   const tableColumns = [
     {
-      Header: "N°",
+      Header: "N",
       accessor: "id" as const,
     },
     {
@@ -154,34 +160,28 @@ const LeasingTablePaginated = (props: any) => {
         Cuotas
       </Heading>
 
-      <Box mt="6" bg={useColorModeValue("white", "gray.900")} overflow="auto">
-        {isLoading ? (
-          <Box
-            minH="950px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <GridLoader color="tomato" loading={isLoading} size={50} />
-          </Box>
-        ) : (
-          <Table
-            colorScheme="twitter"
-            key={uuid4()}
-            // Fallback component when list is empty
-            emptyData={{
-              icon: FiFrown,
-              text: "No hay nada por aquí.",
-            }}
-            totalRegisters={data.length}
-            page={page}
-            // Listen change page event and control the current page using state
-            onPageChange={(page) => setPage(page)}
-            columns={tableColumns}
-            data={tableData as any}
-          />
-        )}
-      </Box>
+      <Skeleton
+        bg={useColorModeValue("white", "gray.900")}
+        isLoaded={!isLoading}
+        height="auto"
+        fadeDuration={3.5}
+        overflow="auto"
+        mt={6}
+      >
+        <Table
+          colorScheme="twitter"
+          key={uuid4()}
+          emptyData={{
+            icon: FiFrown,
+            text: "No hay nada por aquí.",
+          }}
+          totalRegisters={data.length}
+          page={page}
+          onPageChange={(page) => setPage(page)}
+          columns={tableColumns}
+          data={tableData as any}
+        />
+      </Skeleton>
     </Box>
   );
 };

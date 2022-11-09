@@ -1,43 +1,25 @@
-import { useEffect } from "react";
 import { SimpleGrid } from "@chakra-ui/react";
 
 // Components
 import Result from "lib/@core/components/Result";
 
 // Interfaces
-import { PREFIX, ResultItem } from "lib/@core/interfaces/leasing";
+import {
+  LeasingOutputProps,
+  PREFIX,
+  ResultItem,
+} from "lib/@core/interfaces/leasing";
 
-import { CountUp } from "countup.js";
+// Framer motion
 import { motion } from "framer-motion";
+import {
+  animateResultsVariants,
+  initialResultsVariants,
+} from "lib/shared/animation/variants";
 
-const Results = ({
-  results,
-  isLoading,
-}: {
-  results: any;
-  isLoading: boolean;
-}) => {
-  const entries = Object.keys(results);
+// Others
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    entries.forEach((key: string) => {
-      const value = results[key].value;
-      const type = results[key].type;
-      const countUp = new CountUp(key, value, {
-        decimalPlaces: type === PREFIX.NONE ? 0 : type === PREFIX.MONEY ? 2 : 4,
-        prefix: type === PREFIX.MONEY ? PREFIX.MONEY : "",
-        suffix: type === PREFIX.PERCENTAGE ? " %" : "",
-      });
-      if (!countUp.error) {
-        countUp.start();
-      } else {
-        console.error(countUp.error);
-      }
-    });
-  }, [results]);
-
+const Results = ({ results }: { results: LeasingOutputProps }) => {
   return (
     <SimpleGrid
       columns={2}
@@ -46,20 +28,13 @@ const Results = ({
       columnGap={8}
       id="resultados"
       as={motion.div}
-      initial={{
-        height: "100%",
-        opacity: 0,
-        y: 0,
-      }}
-      animate={{
-        height: "100%",
-        opacity: 1,
-        y: [-100, 0],
-      }}
+      h={"100%"}
+      initial={initialResultsVariants}
+      animate={animateResultsVariants}
     >
-      {entries.map((key: string) => {
-        const item: ResultItem = results[key] as ResultItem;
-        return <Result key={key} item={item} id={key} />;
+      {Object.keys(results).map((key: string) => {
+        const item: ResultItem = results[key as keyof LeasingOutputProps];
+        return <Result key={key} item={item} />;
       })}
     </SimpleGrid>
   );

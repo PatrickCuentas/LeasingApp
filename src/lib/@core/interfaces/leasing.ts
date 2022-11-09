@@ -54,6 +54,26 @@ export interface LeasingFinalOutputProps {
 	vanFlujoNeto: ResultItem;
 }
 
+export interface LeasingOutputProps {
+	igv: ResultItem;
+	valorVentaActivo: ResultItem;
+	montoDelLeasing: ResultItem;
+	porcentajeTEP: ResultItem;
+	numeroCuotasPorAnio: ResultItem;
+	numeroTotalDeCuotas: ResultItem;
+	seguroRiesgo: ResultItem;
+	intereses: ResultItem;
+	amortizacionDelCapital: ResultItem;
+	seguroContraTodoRiesgo: ResultItem;
+	comisionesPeriodicas: ResultItem;
+	recompra: ResultItem;
+	desembolsoTotal: ResultItem;
+	tceaFlujoBruto: ResultItem;
+	tceaFlujoNeto: ResultItem;
+	vanFlujoBruto: ResultItem;
+	vanFlujoNeto: ResultItem;
+}
+
 export interface LeasingEntryProps {
 	precioVentaActivo: number
 	nDeAnios: number

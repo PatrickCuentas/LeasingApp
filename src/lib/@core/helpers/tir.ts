@@ -66,6 +66,9 @@ export function calcularTIRPorInterpolacion(data: LeasingTableProps[], key: stri
 		if (van2 > 0) van1 = van2;
 	} while (van2 > 0);
 
+	console.log('van1', van1);
+	console.log('van2', van2);
+
 	tasaVAN1 = tasa - aumento;
 	tasaVAN2 = tasa;
 

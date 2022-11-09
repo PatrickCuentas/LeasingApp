@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Flex,
@@ -13,178 +12,54 @@ import {
   Show,
 } from "@chakra-ui/react";
 
-// firebase
-import { auth } from "lib/@auth/firebase/firebaseConfig";
-import { saveLeasingToFirestore } from "../../@core/firebase";
-
-// react-icons
-import { ImArrowRight } from "react-icons/im";
-
-// formik
-import { useFormik } from "formik";
-
 // components
 import LeasingTablePaginated from "lib/@core/LeasingTablePaginated";
 import NumberInputForm from "lib/@core/components/NumberInputForm";
 import Results from "lib/@core/components/Results";
 import SelectInputForm from "lib/@core/components/SelectInputForm";
+import SaveLeasingDrawer from "./components/SaveLeasingDrawer";
+
+// firebase
+import { auth } from "lib/@auth/firebase/firebaseConfig";
+
+// react-icons
+import { ImArrowRight } from "react-icons/im";
 
 // Framer motion
 import { motion } from "framer-motion";
+import { mainVariants } from "lib/shared/animation/variants";
 
-// interfaces
-import {
-  LeasingEntryProps,
-  LeasingInitialOutputProps,
-  LeasingFinalOutputProps,
-  LeasingTableProps,
-} from "lib/@core/interfaces/leasing";
+// hooks
+import useLeasing from "./hooks/useLeasing";
 
-// utilities
-import {
-  DEMO_ENTRY_DATA,
-  DEMO_FINAL_OUTPUT_DATA,
-  DEMO_INITIAL_OUTPUT_DATA,
-} from "lib/@core/utils/states";
-import { CONSTRAINTS } from "lib/@core/utils/contraints";
 import {
   nDiasPorAnioOptions,
   frecuenciaDePagoOptions,
 } from "lib/@core/utils/options";
+import { CONSTRAINTS } from "lib/@core/utils/contraints";
 
-// helpers
-import {
-  calculateFinalOutputResults,
-  calculateInitialOutputResults,
-  calculateTableResults,
-  recalculateTableResults,
-} from "lib/@core/helpers/calculations";
-
-import "./index.css";
-import SaveLeasingDrawer from "./components/SaveLeasingDrawer";
-
+// constants
 const MONEDA = "S/.";
 
-const wait = (time: number) =>
-  new Promise((resolve) => setTimeout(resolve, time));
+import "./index.css";
 
 const Home = () => {
   const userName = auth?.currentUser?.displayName;
-  const [hasResults, setHasResults] = useState(false);
-  const [initialOutputResultsState, setInitialOutputResults] =
-    useState<LeasingInitialOutputProps>(DEMO_INITIAL_OUTPUT_DATA);
-  const [finalOutputResultsState, setFinalOutputResultsState] =
-    useState<LeasingFinalOutputProps>(DEMO_FINAL_OUTPUT_DATA);
-  const [tableResults, setTableResults] = useState<LeasingTableProps[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [leasingSavedState, setLeasingSavedState] = useState({
-    isSaved: false,
-    isSaving: false,
-  });
+
+  const {
+    formik,
+    initialOutputResultsState,
+    finalOutputResultsState,
+    tableResults,
+    hasResults,
+    loading,
+    leasingSavedState,
+    formHandleChange,
+    gracePeriodHandleChange,
+    saveLeasing,
+  } = useLeasing();
+
   const { isSaved, isSaving } = leasingSavedState;
-
-  const formik = useFormik({
-    initialValues: DEMO_ENTRY_DATA as LeasingEntryProps,
-    onSubmit: async (formData: LeasingEntryProps) => {
-      await wait(100);
-      const initialOutputResults: LeasingInitialOutputProps =
-        calculateInitialOutputResults(formData);
-      setInitialOutputResults(initialOutputResults);
-      const table_results: LeasingTableProps[] = calculateTableResults(
-        formData,
-        initialOutputResults,
-        handleEndTableCalculation
-      );
-      const finalOutputResults: LeasingFinalOutputProps =
-        calculateFinalOutputResults(formData, table_results);
-      setFinalOutputResultsState(finalOutputResults);
-    },
-    validate: (values: LeasingEntryProps) => {
-      const errors: any = {};
-      for (const [key, value] of Object.entries(values)) {
-        if (!value) {
-          errors[key] = "Requerido";
-        }
-      }
-      return errors;
-    },
-  });
-
-  const handleEndTableCalculation = (results: LeasingTableProps[]) => {
-    setHasResults(true);
-    setTableResults(results);
-  };
-
-  const handleChange = (e: any, id: string) => {
-    setHasResults(false);
-    setTableResults([]);
-    setLeasingSavedState({
-      isSaved: false,
-      isSaving: false,
-    });
-    formik.setFieldValue(id, parseFloat(e));
-  };
-
-  const radioInputHandler = (value: any) => async (index: any) => {
-    const tableResultsCopy = [...tableResults];
-    tableResultsCopy[index].periodoGracia = value;
-    setLoading(true);
-    await wait(1000);
-    const newTableResults = recalculateTableResults(
-      tableResultsCopy,
-      formik.values,
-      initialOutputResultsState
-    );
-    setTableResults(newTableResults);
-    const results = calculateFinalOutputResults(formik.values, newTableResults);
-    setFinalOutputResultsState(results);
-    setLoading(false);
-  };
-
-  const saveLeasingHandler = async (values: any) => {
-    setLeasingSavedState({
-      ...leasingSavedState,
-      isSaving: true,
-    });
-    await saveLeasingToFirestore(
-      values,
-      formik.values,
-      initialOutputResultsState,
-      finalOutputResultsState,
-      tableResults
-    );
-    setLeasingSavedState({
-      ...leasingSavedState,
-      isSaving: false,
-      isSaved: true,
-    });
-  };
-
-  const variants = {
-    withResults: {
-      initial: {
-        y: 0,
-        opacity: 0,
-      },
-      animate: {
-        opacity: 1,
-        y: [-100, 0],
-        height: "auto",
-      },
-    },
-    withoutResults: {
-      initial: {
-        y: 0,
-        height: 0,
-        opacity: 0,
-      },
-      animate: {
-        y: 0,
-        height: "100%",
-        opacity: 1,
-      },
-    },
-  };
 
   return (
     <>
@@ -195,7 +70,7 @@ const Home = () => {
           fontFamily="monospace"
           fontWeight="bold"
         >
-          Bienvenido de nuevo {userName} 🌟🌟
+          Bienvenido de nuevo {userName || "Anónimo"} 🌟🌟
         </Text>
         <Heading
           m={[4, null, 8]}
@@ -233,13 +108,13 @@ const Home = () => {
                     as={motion.div}
                     initial={
                       hasResults
-                        ? variants.withResults.initial
-                        : variants.withoutResults.initial
+                        ? mainVariants.withResults.initial
+                        : mainVariants.withoutResults.initial
                     }
                     animate={
                       hasResults
-                        ? variants.withResults.animate
-                        : variants.withoutResults.animate
+                        ? mainVariants.withResults.animate
+                        : mainVariants.withoutResults.animate
                     }
                     placeItems="flex-end"
                     alignItems="baseline"
@@ -250,13 +125,13 @@ const Home = () => {
                       contraints={CONSTRAINTS.precioVentaActivo}
                       value={formik.values.precioVentaActivo}
                       prefix={MONEDA}
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       errorMessage={formik.errors.precioVentaActivo}
                     />
                     <NumberInputForm
                       id="nDeAnios"
                       title="Número de Años"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"Años"}
                       min={1}
                       max={30}
@@ -269,7 +144,7 @@ const Home = () => {
                       id="frecuenciaDePago"
                       title="Frecuencia de Pago"
                       value={formik.values.frecuenciaDePago}
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"Dias"}
                       options={frecuenciaDePagoOptions}
                       contraints={CONSTRAINTS.frecuenciaDePago}
@@ -278,7 +153,7 @@ const Home = () => {
                       id="nDiasPorAnio"
                       title="Número de Días por Año"
                       value={formik.values.nDiasPorAnio}
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"Dias"}
                       options={nDiasPorAnioOptions}
                       contraints={CONSTRAINTS.nDiasPorAnio}
@@ -286,7 +161,7 @@ const Home = () => {
                     <NumberInputForm
                       id="porcentajeTEA"
                       title="Porcentaje TEA"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.porcentajeTEA}
                       errorMessage={formik.errors.porcentajeTEA}
@@ -295,7 +170,7 @@ const Home = () => {
                     <NumberInputForm
                       id="porcentajeImpuestoALaRenta"
                       title="Porcentaje Impuesto a la Renta"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.porcentajeImpuestoALaRenta}
                       errorMessage={formik.errors.porcentajeImpuestoALaRenta}
@@ -304,7 +179,7 @@ const Home = () => {
                     <NumberInputForm
                       id="porcentajeRecompra"
                       title="Porcentaje Recompra"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.porcentajeRecompra}
                       errorMessage={formik.errors.porcentajeRecompra}
@@ -313,7 +188,7 @@ const Home = () => {
                     <NumberInputForm
                       id="costesNotariales"
                       title="Costes Notariales"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.costesNotariales}
                       errorMessage={formik.errors.costesNotariales}
@@ -322,7 +197,7 @@ const Home = () => {
                     <NumberInputForm
                       id="costesRegistrales"
                       title="Costes Registrales"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.costesRegistrales}
                       errorMessage={formik.errors.costesRegistrales}
@@ -331,7 +206,7 @@ const Home = () => {
                     <NumberInputForm
                       id="tasacion"
                       title="Tasación"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.tasacion}
                       errorMessage={formik.errors.tasacion}
@@ -340,7 +215,7 @@ const Home = () => {
                     <NumberInputForm
                       id="comisionDeEstudio"
                       title="Comisión de Estudio"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.comisionDeEstudio}
                       errorMessage={formik.errors.comisionDeEstudio}
@@ -349,7 +224,7 @@ const Home = () => {
                     <NumberInputForm
                       id="comisionDeActivacion"
                       title="Comisión de Activación"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.comisionDeActivacion}
                       errorMessage={formik.errors.comisionDeActivacion}
@@ -358,7 +233,7 @@ const Home = () => {
                     <NumberInputForm
                       id="comisionPeriodica"
                       title="Comisión Periódica"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={MONEDA}
                       value={formik.values.comisionPeriodica}
                       errorMessage={formik.errors.comisionPeriodica}
@@ -366,8 +241,8 @@ const Home = () => {
                     />
                     <NumberInputForm
                       id="porcentajeDeSeguroRiesgo"
-                      title="Porcentaje de Seguro de Riesgo"
-                      handleChange={handleChange}
+                      title="Porcentaje Seguro de Riesgo"
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.porcentajeDeSeguroRiesgo}
                       errorMessage={formik.errors.porcentajeDeSeguroRiesgo}
@@ -376,7 +251,7 @@ const Home = () => {
                     <NumberInputForm
                       id="tasaDescuentoKS"
                       title="Tasa de Descuento KS"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.tasaDescuentoKS}
                       errorMessage={formik.errors.tasaDescuentoKS}
@@ -385,7 +260,7 @@ const Home = () => {
                     <NumberInputForm
                       id="tasaDescuentoWACC"
                       title="Tasa de Descuento WACC"
-                      handleChange={handleChange}
+                      handleChange={formHandleChange}
                       prefix={"%"}
                       value={formik.values.tasaDescuentoWACC}
                       errorMessage={formik.errors.tasaDescuentoWACC}
@@ -416,7 +291,6 @@ const Home = () => {
                     </Show>
                     <GridItem colSpan={[12, 12, 12, 12, 5]}>
                       <Results
-                        isLoading={loading}
                         results={{
                           ...initialOutputResultsState,
                           ...finalOutputResultsState,
@@ -453,7 +327,7 @@ const Home = () => {
                 <SaveLeasingDrawer
                   isSaved={isSaved}
                   isSaving={isSaving}
-                  handler={saveLeasingHandler}
+                  handler={saveLeasing}
                 />
               )}
             </Flex>
@@ -462,7 +336,7 @@ const Home = () => {
         <LeasingTablePaginated
           isLoading={loading}
           data={tableResults}
-          handler={radioInputHandler}
+          handler={gracePeriodHandleChange}
         />
       </Box>
     </>
